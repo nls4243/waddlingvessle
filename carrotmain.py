@@ -50,7 +50,7 @@ grid_color = (0, 0, 0)
 grid_spacing = 50  # Adjust this value to change the spacing of the grid lines
 
 # Modified grid to include timer and color state for each square
-grid = [[{'rect': None, 'timer': 0, 'color': (139, 69, 19)} for _ in range((width*2) // grid_spacing)] for _ in range((height*2) // grid_spacing)]
+grid = [[{'rect': None, 'timer': 0, 'image': None} for _ in range((width * 2) // grid_spacing)] for _ in range((height * 2) // grid_spacing)]
 
 # Variable to keep track of the elapsed time
 start_time = pygame.time.get_ticks()
