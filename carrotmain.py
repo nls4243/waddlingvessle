@@ -19,29 +19,6 @@ class Sprite(pygame.sprite.Sprite):
         self.alive = True
         self.direction = 1
 
-    def move_invasion_pattern(self, speed, screen_width):
-        if self.alive:
-            self.rect.x += speed * self.direction
-            if self.rect.right > screen_width or self.rect.left < 0:
-                self.rect.y += 60
-                self.direction *= -1
-            self.rect.x += speed * self.direction
-
-    def move_towards(self, speed):
-        angle = math.atan2(-90, 0)
-        self.rect.x += speed * math.cos(angle)
-        self.rect.y += speed * math.sin(angle)
-
-class Sprite2(pygame.sprite.Sprite):
-    def __init__(self, x, y, l, h, png):
-        super().__init__()
-        self.image = pygame.Surface((l, h))
-        self.image = pygame.image.load(png)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.alive = True
-        self.direction = 1
-
 pygame.init()
 width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
@@ -85,7 +62,7 @@ def fill_grid_square(gridX, gridY):
     grid[gridY][gridX]['rect'] = pygame.Rect(gridX * grid_spacing, gridY * grid_spacing, grid_spacing, grid_spacing)
     grid[gridY][gridX]['timer'] = 0
 
-mixer.music.play()
+mixer.music.play(-1)
 while running:
     keys = pygame.key.get_pressed()
     screen.blit(background.image, background.rect)
