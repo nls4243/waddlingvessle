@@ -66,7 +66,7 @@ while running:
         for square in row:
             if square['rect'] is not None:
                 # Check the image in the square
-                if  square.has_key('image):
+                if  'image' in square:
                     screen.blit(square['image'], square['rect'].topleft)
 
     
