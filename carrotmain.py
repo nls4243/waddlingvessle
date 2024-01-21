@@ -1,3 +1,5 @@
+#wr = 43 seconds
+#num2 = 59 seconds
 import pygame
 import sys
 import math
@@ -38,7 +40,7 @@ class Sprite2(pygame.sprite.Sprite):
         self.direction = 1
 
 pygame.init()
-width, height = 1500, 960
+width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("carrots")
 score = 0
