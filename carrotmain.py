@@ -69,8 +69,8 @@ while running:
     for y in range(0, height, grid_spacing):
         pygame.draw.line(screen, grid_color, (0, y), (width, y))
 
-    # Draw filled grid squares
-    for row in grid:
+    # old code
+    """for row in grid:
         for square in row:
             if square['rect'] is not None:
                 pygame.draw.rect(screen, square['color'], square['rect'])
@@ -79,7 +79,21 @@ while running:
                 square['timer'] += 1
                 if square['timer'] >= 300:  # 60 frames per second * 5 seconds
                     square['color'] = (0, 255, 0)  # Change color to green
-                    square['timer'] = 0  # Reset timer
+                    square['timer'] = 0  # Reset timer"""
+     # Draw filled grid squares
+    for row in grid:
+        for square in row:
+            if square['rect'] is not None:
+                # Check the image in the square
+                if square['image'] == None:
+                    carrot_seed_plot = pygame.image.load('carrotseedplot.png')
+                    square['image'] = 'carrotseedplot.png'
+                    screen.blit(carrot_seed_plot, square['rect'].topleft)
+                    square['timer'] += 1
+                    if square['timer'] >= 300:  # 60 frames per second * 5 seconds
+                        square['image'] = 'fullygrowncarrot.png'  # Change image to carrot seed plot
+                        square['timer'] = 0  # Reset timer
+                        score += 10
 
     # Event handling
     for event in pygame.event.get():
