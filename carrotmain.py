@@ -1,8 +1,11 @@
 #wr = 43 seconds
 #num2 = 59 seconds
 import pygame
+from pygame import mixer
 import sys
 import math
+
+mixer.init()
 
 playerspeed = 5
 
@@ -46,6 +49,7 @@ pygame.display.set_caption("carrots")
 score = 0
 red = (255, 0, 0)
 
+#sprites
 sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny1.png')
 all_sprites = pygame.sprite.Group()
 all_sprites.add(sprite1)
@@ -53,6 +57,10 @@ background = pygame.sprite.Sprite()
 background.image = pygame.image.load('background2.png')
 background.rect = background.image.get_rect()
 background.rect.center = (0, 0)
+
+#music
+mixer.music.load('carrots.wav')
+mixer.music.set_volume(0.5)
 
 grid_color = (0, 0, 0)
 grid_spacing = 50
@@ -77,6 +85,7 @@ def fill_grid_square(gridX, gridY):
     grid[gridY][gridX]['rect'] = pygame.Rect(gridX * grid_spacing, gridY * grid_spacing, grid_spacing, grid_spacing)
     grid[gridY][gridX]['timer'] = 0
 
+mixer.music.play()
 while running:
     keys = pygame.key.get_pressed()
     screen.blit(background.image, background.rect)
