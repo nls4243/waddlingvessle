@@ -61,6 +61,15 @@ running = True
 while running:
     keys = pygame.key.get_pressed()
     screen.blit(background.image, background.rect)
+    
+    for row in grid:
+        for square in row:
+            if square['rect'] is not None:
+                # Check the image in the square
+                if not square['image'] == None:
+                    screen.blit(square['image'], square['rect'].topleft)
+
+    
 
     # Draw a grid over the background
     for x in range(0, width, grid_spacing):
@@ -86,12 +95,10 @@ while running:
             if square['rect'] is not None:
                 # Check the image in the square
                 if square['image'] == None:
-                    carrot_seed_plot = pygame.image.load('carrotseedplot.png')
-                    square['image'] = 'carrotseedplot.png'
-                    screen.blit(carrot_seed_plot, square['rect'].topleft)
+                    square['image'] = pygame.image.load('carrotseedplot.png')
                     square['timer'] += 1
                     if square['timer'] >= 300:  # 60 frames per second * 5 seconds
-                        square['image'] = 'fullygrowncarrot.png'  # Change image to carrot seed plot
+                        square['image'] = pygame.image.load('fullygrowncarrot.png'')  # Change image to carrot seed plot
                         square['timer'] = 0  # Reset timer
                         score += 10
 
