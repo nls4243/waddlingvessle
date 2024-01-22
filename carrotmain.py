@@ -65,9 +65,8 @@ def fill_grid_square(gridX, gridY):
 mixer.music.play(-1)
 while running:
     keys = pygame.key.get_pressed()
-    screen.blit(background.image, background.rect)
-
     draw_grid()
+    screen.blit(background.image, background.rect)
 
     for row in grid:
         for square in row:
