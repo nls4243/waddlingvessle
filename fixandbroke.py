@@ -236,11 +236,11 @@ while running:
 
     if keys[pygame.K_w]:
         sprite1.rect.y -= playerspeed
-    elif keys[pygame.K_s]:
+    if keys[pygame.K_s]:
         sprite1.rect.y += playerspeed
-    elif keys[pygame.K_a]:
+    if keys[pygame.K_a]:
         sprite1.rect.x -= playerspeed
-    elif keys[pygame.K_d]:
+    if keys[pygame.K_d]:
         sprite1.rect.x += playerspeed
 
     sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
