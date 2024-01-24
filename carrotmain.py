@@ -8,8 +8,9 @@ pygame.init()
 #other variables and such
 playerspeed = 5
 score = 0
-red = (255, 0, 0)
-itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove']
+itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
+itemdictc = len(itemdict) - 1
+
 selected = None
 dnum = 0
 # Set up display
@@ -19,6 +20,9 @@ pygame.display.set_caption("Crop Simulation")
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 153)
+
 # Load images
 empty_crop_plot = pygame.image.load("emptycropplot.png")
 carrot_seed_plot = pygame.image.load("carrotseedplot.png")
@@ -53,12 +57,26 @@ class simplesprite(pygame.sprite.Sprite):
 sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny1.png')#player sprite
 all_sprites = pygame.sprite.Group()
 all_sprites.add(sprite1)
+
 background = simplesprite('background2.png')
 background.rect.center = (width / 2, height / 2)
+
 carrotitem = simplesprite('justcarrot.png')
+
 carrotseeds = simplesprite('carrotseedpack.png')
+
 gardenhoe = simplesprite('gardenhoe.png')
+
 gardenglove = simplesprite('gardenglove.png')
+
+coin = simplesprite('coin.png')
+
+hotbarUI = simplesprite('carrothotbarUI.png')
+hotbarUI.rect.center = (width / 2, height - (hotbarUI.rect.height/2))
+
+highlight = simplesprite('highlight.png')
+highlight.rect.center = (width / 2 - 86, height - (hotbarUI.rect.height/2))
+
 #note to self make a py group of simple sprites
 
 #music
@@ -151,6 +169,9 @@ class Inventory:
 player_inventory = Inventory()
 running = True
 placing_crop = True
+44
+
+#while loop
 while running:
     keys = pygame.key.get_pressed()
     mousex, mousey = pygame.mouse.get_pos()
@@ -159,11 +180,31 @@ while running:
     carrotseeds.rect.center = (mousex + 15, mousey + 15)
     gardenhoe.rect.center = (mousex + 15, mousey + 15)
     gardenglove.rect.center = (mousex + 15, mousey + 15)
+    coin.rect.center = (mousex + 15, mousey + 15)
     if keys[pygame.K_TAB]:
-        time.sleep(0.2)
+        time.sleep(0.15)
         dnum = (dnum + 1)
-        if dnum > 3:
+        highlight.rect.x += 34
+        if dnum > itemdictc:
+            highlight.rect.center = (width / 2 - 86, height - (hotbarUI.rect.height/2))
             dnum = 0
+    if keys[pygame.K_1]:
+        dnum = 0
+        highlight.rect.center = (width / 2 - 86, height - (hotbarUI.rect.height/2))
+    if keys[pygame.K_2]:
+        dnum = 1
+        highlight.rect.center = (width / 2 - 86 + 34, height - (hotbarUI.rect.height/2))
+    if keys[pygame.K_3]:
+        dnum = 2
+        highlight.rect.center = (width / 2 - 86 + 34*2, height - (hotbarUI.rect.height/2))
+    if keys[pygame.K_4]:
+        dnum = 3
+        highlight.rect.center = (width / 2 - 86 + 34*3, height - (hotbarUI.rect.height/2))
+    if keys[pygame.K_5]:
+        dnum = 4
+        highlight.rect.center = (width / 2 - 86 + 34*4, height - (hotbarUI.rect.height/2))
+
+
     itemhave = itemdict[dnum]
 
     # Draw the grid
@@ -179,6 +220,8 @@ while running:
                 screen.blit(carrot_seed_plot, rect.topleft)
             elif state == 3:
                 screen.blit(fully_grown_carrot, rect.topleft)
+            #DO NOT REMOVE STATE 4 THIS WILL MAKE THE CODE STOP WORKING
+            #NO I DO NOT KNOW WHY IT DOESN'T WORK
             elif state == 4:
                 screen.blit(empty_crop_plot, rect.topleft)
             # Check if the seed has been planted and update to fully grown state after 3 seconds
@@ -198,7 +241,7 @@ while running:
 
             if placing_crop:
                 # Place empty crop plot if the square is empty
-                if grid_state[(row, col)][0] == 0 or 4:
+                if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR STATEMNT WILL STOP WORKING IDK WHY
                     if grid_state[(row, col)][0] == 0 and itemhave == 'hoe':
                         grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
                     elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
@@ -217,18 +260,27 @@ while running:
                 keys = pygame.key.get_pressed()
                 pygame.display.update()
                 screen.blit(background.image, background.rect)
-                player_inventory.draw()
                 all_sprites.draw(screen)
+                player_inventory.draw()
                 mousex, mousey = pygame.mouse.get_pos()
-                """carrotitem.rect.center = (mousex + 15, mousey + 15)
-                carrotseeds.rect.center = (mousex + 15, mousey + 15)
-                gardenhoe.rect.center = (mousex + 15, mousey + 15)
-                if keys[pygame.K_TAB]:
-                    time.sleep(0.2)
-                    dnum = (dnum + 1)
-                    if dnum > 2:
-                        dnum = 0
-                itemhave = itemdict[dnum]"""
+                for row in range(rows):
+                    for col in range(cols):
+                        rect = pygame.Rect(col * grid_size, row * grid_size, grid_size, grid_size)
+                        # Display the appropriate image based on the grid state
+                        state, planting_time = grid_state[(row, col)]
+                        if state == 1:
+                            screen.blit(empty_crop_plot, rect.topleft)
+                        elif state == 2:
+                            screen.blit(carrot_seed_plot, rect.topleft)
+                        elif state == 3:
+                            screen.blit(fully_grown_carrot, rect.topleft)
+                        #DO NOT REMOVE STATE 4 THIS WILL MAKE THE CODE STOP WORKING
+                        #NO I DO NOT KNOW WHY IT DOESN'T WORK
+                        elif state == 4:
+                            screen.blit(empty_crop_plot, rect.topleft)
+                        # Check if the seed has been planted and update to fully grown state after 3 seconds
+                        if state == 2 and time.time() - planting_time > 3:
+                            grid_state[(row, col)] = (3, planting_time)  # Mark as fully grown
                 if selected:
                     screen.blit(selected[0].resize(30),(mousex,mousey))
                     obj = font.render(str(selected[1]),True,(0,0,0))
@@ -251,7 +303,9 @@ while running:
                                     player_inventory.items[pos[0]][pos[1]] = None
                 if keys[pygame.K_ESCAPE]:
                     going = False
-
+                player_inventory.draw()
+    screen.blit(hotbarUI.image, hotbarUI.rect)
+    screen.blit(highlight.image, highlight.rect)
 
     all_sprites.draw(screen)
     if itemhave == 'carrot':
@@ -262,6 +316,8 @@ while running:
         screen.blit(gardenhoe.image, gardenhoe.rect)
     if itemhave == 'gardenglove':
         screen.blit(gardenglove.image, gardenglove.rect)
+    if itemhave == 'coin':
+        screen.blit(coin.image, coin.rect)
 
     font = pygame.font.Font(None, 36)
     score_text = font.render(f"carrots: {score}", True, WHITE)
