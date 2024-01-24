@@ -5,6 +5,7 @@ import random
 
 # Initialize Pygame
 pygame.init()
+#other variables and such
 playerspeed = 5
 score = 0
 red = (255, 0, 0)
@@ -29,6 +30,7 @@ def addscore():
         score += 10
         break
 
+#class for player sprite
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, x, y, l, h, png):
         super().__init__()
@@ -39,13 +41,14 @@ class Sprite(pygame.sprite.Sprite):
         self.alive = True
         self.direction = 1
 
+#class for other sprites
 class simplesprite(pygame.sprite.Sprite):
     def __init__(self, png):
         self.image = pygame.image.load(png)
         self.rect = self.image.get_rect()
 
 #sprites
-sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny1.png')
+sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny1.png')#player sprite
 all_sprites = pygame.sprite.Group()
 all_sprites.add(sprite1)
 background = simplesprite('background2.png')
@@ -53,22 +56,23 @@ background.rect.center = (width / 2, height / 2)
 carrotitem = simplesprite('justcarrot.png')
 carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
+#note to self make a py group of simple sprites
 
 #music
 mixer.music.load('carrots.wav')
 mixer.music.set_volume(0.5)
-#mixer.music.play(-1)
+mixer.music.play(-1)
+
 # Set up grid
 grid_size = 50
 rows, cols = width // grid_size, width // grid_size
 grid = [[0] * cols for _ in range(rows)]
+
 # Set up clock
 clock = pygame.time.Clock()
+
 # Define a dictionary to store the state and planting time of each grid square
 grid_state = {(row, col): (0, 0) for row in range(rows) for col in range(cols)}
-# Main game loop
-running = True
-placing_crop = True
 
 #these are the images that get shown as items, different color circle for each item
 items = [pygame.Surface((50,50),pygame.SRCALPHA) for x in range(4)]
@@ -142,7 +146,8 @@ class Inventory:
             return False
         return True
 player_inventory = Inventory()
-
+running = True
+placing_crop = True
 while running:
     keys = pygame.key.get_pressed()
     mousex, mousey = pygame.mouse.get_pos()
@@ -197,12 +202,13 @@ while running:
 
             if placing_crop:
                 # Place empty crop plot if the square is empty
-                if grid_state[(row, col)][0] == 0 or 4 and itemhave == 'hoe':
-                    grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
-                elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
-                    grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
-                elif grid_state[(row, col)][0] == 2 and itemhave == 'hoe':
-                    grid_state[(row, col)] = 4
+                if grid_state[(row, col)][0] == 0 or 4:
+                    if itemhave == 'hoe':
+                        grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
+                    elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
+                        grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
+                    elif grid_state[(row, col)][0] == 2 and itemhave == 'hoe':
+                        grid_state[(row, col)] = 4
             else:
                 # Plant a new seed if the square has an empty crop plot
                 if grid_state[(row, col)][0] == 1:
