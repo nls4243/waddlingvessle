@@ -161,12 +161,6 @@ while running:
         if dnum > 2:
             dnum = 0
     itemhave = itemdict[dnum]
-    if itemhave == 'carrot':
-        screen.blit(carrotitem.image, carrotitem.rect)
-    if itemhave == 'carrotseed':
-        screen.blit(carrotseeds.image, carrotseeds.rect)
-    if itemhave == 'hoe':
-        screen.blit(gardenhoe.image, gardenhoe.rect)
 
     # Draw the grid
     for row in range(rows):
@@ -247,6 +241,12 @@ while running:
 
 
     all_sprites.draw(screen)
+    if itemhave == 'carrot':
+        screen.blit(carrotitem.image, carrotitem.rect)
+    if itemhave == 'carrotseed':
+        screen.blit(carrotseeds.image, carrotseeds.rect)
+    if itemhave == 'hoe':
+        screen.blit(gardenhoe.image, gardenhoe.rect)
 
     font = pygame.font.Font(None, 36)
     score_text = font.render(f"currency: {score}", True, red)
