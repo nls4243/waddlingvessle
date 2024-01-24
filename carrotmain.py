@@ -27,7 +27,7 @@ fully_grown_carrot = pygame.image.load("fullygrowncarrot.png")
 def addscore():
     global score
     while True:
-        score += 10
+        score += 1
         break
 
 #class for player sprite
@@ -184,7 +184,6 @@ while running:
             # Check if the seed has been planted and update to fully grown state after 3 seconds
             if state == 2 and time.time() - planting_time > 3:
                 grid_state[(row, col)] = (3, planting_time)  # Mark as fully grown
-                addscore()
 
 
 
@@ -206,6 +205,7 @@ while running:
                         grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
                     elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
                         grid_state[(row, col)] = (1, 0)
+                        addscore()
             else:
                 # Plant a new seed if the square has an empty crop plot
                 if grid_state[(row, col)][0] == 1:
@@ -264,7 +264,7 @@ while running:
         screen.blit(gardenglove.image, gardenglove.rect)
 
     font = pygame.font.Font(None, 36)
-    score_text = font.render(f"currency: {score}", True, WHITE)
+    score_text = font.render(f"carrots: {score}", True, WHITE)
     screen.blit(score_text, (10, 10))
 
     pygame.display.flip()
