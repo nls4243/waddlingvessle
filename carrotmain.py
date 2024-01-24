@@ -162,11 +162,14 @@ while running:
             dnum = 0
     itemhave = itemdict[dnum]
 
+
+
+
+
     # Draw the grid
     for row in range(rows):
         for col in range(cols):
             rect = pygame.Rect(col * grid_size, row * grid_size, grid_size, grid_size)
-            pygame.draw.rect(screen, BLACK, rect, 1)  # Draw grid outline
 
             # Display the appropriate image based on the grid state
             state, planting_time = grid_state[(row, col)]
@@ -213,9 +216,19 @@ while running:
             while going:
                 keys = pygame.key.get_pressed()
                 pygame.display.update()
+                screen.blit(background.image, background.rect)
                 player_inventory.draw()
                 all_sprites.draw(screen)
                 mousex, mousey = pygame.mouse.get_pos()
+                """carrotitem.rect.center = (mousex + 15, mousey + 15)
+                carrotseeds.rect.center = (mousex + 15, mousey + 15)
+                gardenhoe.rect.center = (mousex + 15, mousey + 15)
+                if keys[pygame.K_TAB]:
+                    time.sleep(0.2)
+                    dnum = (dnum + 1)
+                    if dnum > 2:
+                        dnum = 0
+                itemhave = itemdict[dnum]"""
                 if selected:
                     screen.blit(selected[0].resize(30),(mousex,mousey))
                     obj = font.render(str(selected[1]),True,(0,0,0))
@@ -249,7 +262,7 @@ while running:
         screen.blit(gardenhoe.image, gardenhoe.rect)
 
     font = pygame.font.Font(None, 36)
-    score_text = font.render(f"currency: {score}", True, red)
+    score_text = font.render(f"currency: {score}", True, WHITE)
     screen.blit(score_text, (10, 10))
 
     pygame.display.flip()
