@@ -9,7 +9,7 @@ pygame.init()
 playerspeed = 5
 score = 0
 red = (255, 0, 0)
-itemdict = ['carrotseed', 'carrot', 'hoe']
+itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove']
 selected = None
 dnum = 0
 # Set up display
@@ -46,6 +46,8 @@ class simplesprite(pygame.sprite.Sprite):
     def __init__(self, png):
         self.image = pygame.image.load(png)
         self.rect = self.image.get_rect()
+        mousex, mousey = pygame.mouse.get_pos()
+        self.rect.center = (mousex + 15, mousey + 15)
 
 #sprites
 sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny1.png')#player sprite
@@ -56,6 +58,7 @@ background.rect.center = (width / 2, height / 2)
 carrotitem = simplesprite('justcarrot.png')
 carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
+gardenglove = simplesprite('gardenglove.png')
 #note to self make a py group of simple sprites
 
 #music
@@ -155,16 +158,13 @@ while running:
     carrotitem.rect.center = (mousex + 15, mousey + 15)
     carrotseeds.rect.center = (mousex + 15, mousey + 15)
     gardenhoe.rect.center = (mousex + 15, mousey + 15)
+    gardenglove.rect.center = (mousex + 15, mousey + 15)
     if keys[pygame.K_TAB]:
         time.sleep(0.2)
         dnum = (dnum + 1)
-        if dnum > 2:
+        if dnum > 3:
             dnum = 0
     itemhave = itemdict[dnum]
-
-
-
-
 
     # Draw the grid
     for row in range(rows):
@@ -200,12 +200,12 @@ while running:
             if placing_crop:
                 # Place empty crop plot if the square is empty
                 if grid_state[(row, col)][0] == 0 or 4:
-                    if itemhave == 'hoe':
+                    if grid_state[(row, col)][0] == 0 and itemhave == 'hoe':
                         grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
                     elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
                         grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
-                    elif grid_state[(row, col)][0] == 2 and itemhave == 'hoe':
-                        grid_state[(row, col)] = 4
+                    elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
+                        grid_state[(row, col)] = (1, 0)
             else:
                 # Plant a new seed if the square has an empty crop plot
                 if grid_state[(row, col)][0] == 1:
@@ -260,6 +260,8 @@ while running:
         screen.blit(carrotseeds.image, carrotseeds.rect)
     if itemhave == 'hoe':
         screen.blit(gardenhoe.image, gardenhoe.rect)
+    if itemhave == 'gardenglove':
+        screen.blit(gardenglove.image, gardenglove.rect)
 
     font = pygame.font.Font(None, 36)
     score_text = font.render(f"currency: {score}", True, WHITE)
