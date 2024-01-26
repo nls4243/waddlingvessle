@@ -2,6 +2,7 @@ import pygame
 from pygame import *
 import time
 import random
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -82,7 +83,7 @@ highlight.rect.center = (width / 2 - 86, height - (hotbarUI.rect.height/2))
 #music
 mixer.music.load('carrots.wav')
 mixer.music.set_volume(0.5)
-mixer.music.play(-1)
+#mixer.music.play(-1)
 
 # Set up grid
 grid_size = 50
@@ -176,11 +177,11 @@ while running:
     keys = pygame.key.get_pressed()
     mousex, mousey = pygame.mouse.get_pos()
     screen.blit(background.image, background.rect)
-    carrotitem.rect.center = (mousex + 15, mousey + 15)
-    carrotseeds.rect.center = (mousex + 15, mousey + 15)
-    gardenhoe.rect.center = (mousex + 15, mousey + 15)
-    gardenglove.rect.center = (mousex + 15, mousey + 15)
-    coin.rect.center = (mousex + 15, mousey + 15)
+    carrotitem.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+    carrotseeds.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+    gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+    gardenglove.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+    coin.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
     if keys[pygame.K_TAB]:
         time.sleep(0.15)
         dnum = (dnum + 1)
@@ -230,6 +231,12 @@ while running:
 
 
 
+    #character radius check
+    sprite1.rect.x
+
+
+
+
     # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -239,71 +246,26 @@ while running:
             col = x // grid_size
             row = y // grid_size
 
-            if placing_crop:
-                # Place empty crop plot if the square is empty
-                if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR STATEMNT WILL STOP WORKING IDK WHY
-                    if grid_state[(row, col)][0] == 0 and itemhave == 'hoe':
-                        grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
-                    elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
-                        grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
-                    elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
-                        grid_state[(row, col)] = (1, 0)
-                        addscore()
-            else:
-                # Plant a new seed if the square has an empty crop plot
-                if grid_state[(row, col)][0] == 1:
-                    grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and store planting time
+            playerx = sprite1.rect.x
+            playery = sprite1.rect.y
+            
+            #Nathan this is your homework pls improve
+            if x < playerx + 100 and x > playerx - 100 and y < playery + 100 and y > playery - 100:
+                if placing_crop:
+                    # Place empty crop plot if the square is empty
+                    if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR STATEMNT WILL STOP WORKING IDK WHY
+                        if grid_state[(row, col)][0] == 0 and itemhave == 'hoe':
+                            grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
+                        elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed':
+                            grid_state[(row, col)] = (2, time.time())  # Change to seeded variant
+                        elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
+                            grid_state[(row, col)] = (1, 0)
+                            addscore()
+                else:
+                    # Plant a new seed if the square has an empty crop plot
+                    if grid_state[(row, col)][0] == 1:
+                        grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and store planting time
 
-        elif keys[pygame.K_SPACE]:
-            going = True
-            while going:
-                keys = pygame.key.get_pressed()
-                pygame.display.update()
-                screen.blit(background.image, background.rect)
-                all_sprites.draw(screen)
-                player_inventory.draw()
-                mousex, mousey = pygame.mouse.get_pos()
-                for row in range(rows):
-                    for col in range(cols):
-                        rect = pygame.Rect(col * grid_size, row * grid_size, grid_size, grid_size)
-                        # Display the appropriate image based on the grid state
-                        state, planting_time = grid_state[(row, col)]
-                        if state == 1:
-                            screen.blit(empty_crop_plot, rect.topleft)
-                        elif state == 2:
-                            screen.blit(carrot_seed_plot, rect.topleft)
-                        elif state == 3:
-                            screen.blit(fully_grown_carrot, rect.topleft)
-                        #DO NOT REMOVE STATE 4 THIS WILL MAKE THE CODE STOP WORKING
-                        #NO I DO NOT KNOW WHY IT DOESN'T WORK
-                        elif state == 4:
-                            screen.blit(empty_crop_plot, rect.topleft)
-                        # Check if the seed has been planted and update to fully grown state after 3 seconds
-                        if state == 2 and time.time() - planting_time > 3:
-                            grid_state[(row, col)] = (3, planting_time)  # Mark as fully grown
-                if selected:
-                    screen.blit(selected[0].resize(30),(mousex,mousey))
-                    obj = font.render(str(selected[1]),True,(0,0,0))
-                    screen.blit(obj,(mousex + 15, mousey + 15))
-                for e in pygame.event.get():
-                    if e.type == pygame.QUIT:
-                        running = False
-                        pygame.quit()
-                    if e.type == pygame.MOUSEBUTTONDOWN:
-                        #if right clicked, get a random item
-                        if e.button == 3:
-                            selected = [Item(random.randint(0,3)),1]
-                        elif e.button == 1:
-                            pos = player_inventory.Get_pos()
-                            if player_inventory.In_grid(pos[0],pos[1]):
-                                if selected:
-                                    selected = player_inventory.Add(selected,pos)
-                                elif player_inventory.items[pos[0]][pos[1]]:
-                                    selected = player_inventory.items[pos[0]][pos[1]]
-                                    player_inventory.items[pos[0]][pos[1]] = None
-                if keys[pygame.K_ESCAPE]:
-                    going = False
-                player_inventory.draw()
     screen.blit(hotbarUI.image, hotbarUI.rect)
     screen.blit(highlight.image, highlight.rect)
 
@@ -341,3 +303,7 @@ while running:
     clock.tick(60)
 # Quit Pygame
 pygame.quit()
+
+#how to check collision
+#if sprite1.colliderect(carrotseeds.rect):
+    #print('hit')
