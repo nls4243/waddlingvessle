@@ -178,6 +178,8 @@ placing_crop = True
 RUNNING = True
 hoe_durability.value = 6
 carrotseed.addscore(15)
+coinage.addscore(100)
+move_ticker = 0
 
 #while loop
 while running:
@@ -189,8 +191,10 @@ while running:
     gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
     gardenglove.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
     coin.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
-    if keys[pygame.K_TAB]:
-        time.sleep(0.15)
+    if move_ticker > 0:
+        move_ticker -= 1
+    if keys[pygame.K_TAB] and move_ticker == 0:
+        move_ticker = 10
         dnum = (dnum + 1)
         highlight.rect.x += 34
         if dnum > itemdictc:
@@ -314,14 +318,15 @@ while running:
     if keys[pygame.K_6]:
         coinage.addscore(carrots.value*2)
         carrots.value = 0
-    if keys[pygame.K_8] and hoe_durability.value < 6:
-        time.sleep(0.2)
+    if keys[pygame.K_8] and hoe_durability.value < 6 and move_ticker == 0:
         hoe_durability.value = 6
         coinage.addscore(-20)
-    if keys[pygame.K_7] and coinage.value >= 10:
-        time.sleep(0.2)
+        move_ticker = 10
+    if keys[pygame.K_7] and coinage.value >= 10 and move_ticker == 0: #this will always do 2x idk why just leave it
         coinage.addscore(-10)
         carrotseed.addscore(10)
+        move_ticker = 10
+
 
     pygame.display.flip()
 
@@ -342,9 +347,6 @@ while running:
 # Quit Pygame
 pygame.quit()
 
-#how to check collision
-#if sprite1.colliderect(carrotseeds.rect):
-    #print('hit')
 #how to check collision
 #if sprite1.colliderect(carrotseeds.rect):
     #print('hit')
