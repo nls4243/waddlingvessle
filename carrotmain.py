@@ -178,7 +178,6 @@ placing_crop = True
 RUNNING = True
 hoe_durability.value = 6
 carrotseed.addscore(15)
-coinage.addscore(100)
 move_ticker = 0
 
 #while loop
