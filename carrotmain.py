@@ -94,7 +94,7 @@ placing_crop = True
 running = True
 RUNNING = True
 move_ticker = 0
-playerspeed = 3
+playerspeed = 2
 dnum = 0
 hoe_durability.value = 6
 carrotseed.addscore(15)
@@ -180,13 +180,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                col = x // grid_size
-                row = y // grid_size
-
-                playerx = sprite1.rect.x
-                playery = sprite1.rect.y
+        elif keys[K_e] and move_ticker == 0:
+                playerx = sprite1.rect.x + 32
+                playery = sprite1.rect.y + 32
+                col = playerx // grid_size
+                row = playery // grid_size
                 
                 #Nathan this is your homework pls improve
                 #if x < (playerx + 32) + 85 and x > (playerx - 32) - 85 and y < (playery + 32) + 88 and y > (playery - 32) - 100:
@@ -279,6 +277,10 @@ while running:
         font = pygame.font.Font(None, 36)
         glove_text = font.render("""use glove to harvest crops""", True, RED)
         screen.blit(glove_text, (10, 250))
+
+        font = pygame.font.Font(None, 36)
+        interact_text = font.render("""press E to interact""", True, RED)
+        screen.blit(interact_text, (10, 270))
 
     #current buy and sell controls
     if keys[pygame.K_6]:
