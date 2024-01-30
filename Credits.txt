@@ -1,5 +1,10 @@
 waddlingvessle-dev-team:
+  nsl4243
+  Xeno333
+  V3ZZ3L
 
-nsl4243
-Xeno333
-V3ZZ3L
+patrons:
+  Luke Fulgum
+    3$
+  Cody Fitzgerald
+    let me borrow his charger
