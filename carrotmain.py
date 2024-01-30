@@ -12,17 +12,12 @@ width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Crop Simulation")
 
-# Define colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 153)
-
 # Load images
 empty_crop_plot = pygame.image.load("emptycropplot.png")
 carrot_seed_plot = pygame.image.load("carrotseedplot.png")
 fully_grown_carrot = pygame.image.load("fullygrowncarrot.png")
 
+#class for counting values
 class Counter:
     def __init__(self):
         self.value = 0
@@ -88,7 +83,7 @@ grid_state = {(row, col): (0, 0) for row in range(rows) for col in range(cols)}
 #dictionary that keeps tracks of the items the player has
 itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
 
-#other variables and such
+#some variables and such
 itemdictc = len(itemdict) - 1
 carrotseed = Counter()
 carrots = Counter()
@@ -103,6 +98,10 @@ playerspeed = 3
 dnum = 0
 hoe_durability.value = 6
 carrotseed.addscore(15)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 153)
 
 #music
 mixer.music.load('carrots.wav')
@@ -113,8 +112,11 @@ mixer.music.play(-1)
 while running:
     keys = pygame.key.get_pressed()
     mousex, mousey = pygame.mouse.get_pos()
+
+    #display background
     screen.blit(background.image, background.rect)
 
+    #set where the sprites will be displayed
     carrotitem.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
     carrotseeds.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
     gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
@@ -179,32 +181,32 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            x, y = event.pos
-            col = x // grid_size
-            row = y // grid_size
+                x, y = event.pos
+                col = x // grid_size
+                row = y // grid_size
 
-            playerx = sprite1.rect.x
-            playery = sprite1.rect.y
-            
-            #Nathan this is your homework pls improve
-            #if x < (playerx + 32) + 85 and x > (playerx - 32) - 85 and y < (playery + 32) + 88 and y > (playery - 32) - 100:
+                playerx = sprite1.rect.x
+                playery = sprite1.rect.y
+                
+                #Nathan this is your homework pls improve
+                #if x < (playerx + 32) + 85 and x > (playerx - 32) - 85 and y < (playery + 32) + 88 and y > (playery - 32) - 100:
 
-            if placing_crop:
-                # Place empty crop plot if the square is empty
-                if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
-                    if grid_state[(row, col)][0] == 0 and itemhave == 'hoe' and hoe_durability.value > 0:
-                        grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
-                        hoe_durability.addscore(-1)
-                    elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed' and carrotseed.value > 0:
-                        grid_state[(row, col)] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-                        carrotseed.addscore(-1)
-                    elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
-                        grid_state[(row, col)] = (1, 0)
-                        carrots.addscore(1)
-            else:
-                # Plant a new seed if the square has an empty crop plot
-                if grid_state[(row, col)][0] == 1:
-                    grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and start timer to grow carrot
+                if placing_crop:
+                    # Place empty crop plot if the square is empty
+                    if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
+                        if grid_state[(row, col)][0] == 0 and itemhave == 'hoe' and hoe_durability.value > 0:
+                            grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
+                            hoe_durability.addscore(-1)
+                        elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed' and carrotseed.value > 0:
+                            grid_state[(row, col)] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
+                            carrotseed.addscore(-1)
+                        elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
+                            grid_state[(row, col)] = (1, 0)
+                            carrots.addscore(1)
+                else:
+                    # Plant a new seed if the square has an empty crop plot
+                    if grid_state[(row, col)][0] == 1:
+                        grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and start timer to grow carrot
 
     #display hotbar
     screen.blit(hotbarUI.image, hotbarUI.rect)
@@ -240,19 +242,43 @@ while running:
     coin_text = font.render(f"coins: {coinage.value}", True, WHITE)
     screen.blit(coin_text, (10, 70))
 
+    font = pygame.font.Font(None, 36)
+    controls_text = font.render("ESC for controls", True, WHITE)
+    screen.blit(controls_text, (10, 90))
+
     #display controls is esc is pressed
     if keys[pygame.K_ESCAPE]:
         font = pygame.font.Font(None, 36)
         hoelife_text = font.render("press 7 to replenish seeds for 10 coins", True, RED)
-        screen.blit(hoelife_text, (10, 110))
+        screen.blit(hoelife_text, (10, 150))
 
         font = pygame.font.Font(None, 36)
         sell_text = font.render("press 6 to sell carrots", True, RED)
-        screen.blit(sell_text, (10, 90))
+        screen.blit(sell_text, (10, 130))
 
         font = pygame.font.Font(None, 36)
         sell_text = font.render("press 8 to repair hoe for 20 coins", True, RED)
-        screen.blit(sell_text, (10, 130))
+        screen.blit(sell_text, (10, 170))
+
+        font = pygame.font.Font(None, 36)
+        sell_text = font.render("use 1-5 or TAB for item select", True, RED)
+        screen.blit(sell_text, (10, 110))
+
+        font = pygame.font.Font(None, 36)
+        move_text = font.render("WASD to move", True, RED)
+        screen.blit(move_text, (10, 190))
+
+        font = pygame.font.Font(None, 36)
+        hoe_text = font.render("""use hoe to place crop plot""", True, RED)
+        screen.blit(hoe_text, (10, 210))
+
+        font = pygame.font.Font(None, 36)
+        seed_text = font.render("""use seeds to plant crops""", True, RED)
+        screen.blit(seed_text, (10, 230))
+
+        font = pygame.font.Font(None, 36)
+        glove_text = font.render("""use glove to harvest crops""", True, RED)
+        screen.blit(glove_text, (10, 250))
 
     #current buy and sell controls
     if keys[pygame.K_6]:
@@ -279,7 +305,6 @@ while running:
         sprite1.rect.x -= playerspeed
     if keys[pygame.K_d]:
         sprite1.rect.x += playerspeed
-
     # Cap the player's position
     sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
     sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
@@ -288,7 +313,6 @@ while running:
     clock.tick(60)
 # Quit Pygame
 pygame.quit()
-
 #reminder on how to check collision
 #if sprite1.colliderect(carrotseeds.rect):
     #print('hit')
