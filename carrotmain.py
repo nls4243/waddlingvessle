@@ -10,7 +10,7 @@ pygame.init()
 # Set up display
 width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Crop Simulation")
+pygame.display.set_caption("CARROT GAME")
 
 # Load images
 empty_crop_plot = pygame.image.load("emptycropplot.png")
@@ -80,21 +80,22 @@ clock = pygame.time.Clock()
 
 # Define a dictionary to store the state and planting time of each grid square
 grid_state = {(row, col): (0, 0) for row in range(rows) for col in range(cols)}
-#dictionary that keeps tracks of the items the player has
-itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
 
-#some variables and such
-itemdictc = len(itemdict) - 1
+#stuff for player invo
+itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
 carrotseed = Counter()
 carrots = Counter()
 hoe_durability = Counter()
 coinage = Counter()
+
+#some variables and such
+itemdictc = len(itemdict) - 1
 selected = None
 placing_crop = True
 running = True
 RUNNING = True
 move_ticker = 0
-playerspeed = 2
+playerspeed = 3
 dnum = 0
 hoe_durability.value = 6
 carrotseed.addscore(15)
@@ -106,7 +107,7 @@ YELLOW = (255, 255, 153)
 #music
 mixer.music.load('carrots.wav')
 mixer.music.set_volume(0.5)
-mixer.music.play(-1)
+#mixer.music.play(-1)
 
 #while loop
 while running:
@@ -180,7 +181,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif keys[K_e] and move_ticker == 0:
+        elif keys[K_SPACE] and move_ticker == 0:
                 playerx = sprite1.rect.x + 32
                 playery = sprite1.rect.y + 32
                 col = playerx // grid_size
@@ -223,64 +224,65 @@ while running:
     if itemhave == 'coin':
         screen.blit(coin.image, coin.rect)
 
-    #score counters
-    font = pygame.font.Font(None, 36)
-    carrots_text = font.render(f"carrots: {carrots.value}", True, WHITE)
-    screen.blit(carrots_text, (10, 10))
+    # display the number of items a player has
+    font = pygame.font.Font(None, 15)
+    carrots_text = font.render(f"{carrots.value}", True, BLACK)
+    screen.blit(carrots_text, (455, 455))
 
-    font = pygame.font.Font(None, 36)
-    carrotseed_text = font.render(f"carrot seeds: {carrotseed.value}", True, WHITE)
-    screen.blit(carrotseed_text, (10, 30))
+    font = pygame.font.Font(None, 15)
+    carrotseed_text = font.render(f"{carrotseed.value}", True, BLACK)
+    screen.blit(carrotseed_text, (415, 455))
 
-    font = pygame.font.Font(None, 36)
-    hoelife_text = font.render(f"hoe durability: {hoe_durability.value}", True, WHITE)
-    screen.blit(hoelife_text, (10, 50))
+    font = pygame.font.Font(None, 15)
+    hoelife_text = font.render(f"{hoe_durability.value}", True, BLACK)
+    screen.blit(hoelife_text, (490, 455))
 
-    font = pygame.font.Font(None, 36)
-    coin_text = font.render(f"coins: {coinage.value}", True, WHITE)
-    screen.blit(coin_text, (10, 70))
+    font = pygame.font.Font(None, 15)
+    coin_text = font.render(f"{coinage.value}", True, BLACK)
+    screen.blit(coin_text, (560, 455))
 
+    #esc for controls prompt
     font = pygame.font.Font(None, 36)
     controls_text = font.render("ESC for controls", True, WHITE)
-    screen.blit(controls_text, (10, 90))
+    screen.blit(controls_text, (10, 10))
 
-    #display controls is esc is pressed
+    #display controls is esc is being pressed
     if keys[pygame.K_ESCAPE]:
         font = pygame.font.Font(None, 36)
         hoelife_text = font.render("press 7 to replenish seeds for 10 coins", True, RED)
-        screen.blit(hoelife_text, (10, 150))
+        screen.blit(hoelife_text, (10, 85))
 
         font = pygame.font.Font(None, 36)
         sell_text = font.render("press 6 to sell carrots", True, RED)
-        screen.blit(sell_text, (10, 130))
+        screen.blit(sell_text, (10, 60))
 
         font = pygame.font.Font(None, 36)
         sell_text = font.render("press 8 to repair hoe for 20 coins", True, RED)
-        screen.blit(sell_text, (10, 170))
-
-        font = pygame.font.Font(None, 36)
-        sell_text = font.render("use 1-5 or TAB for item select", True, RED)
         screen.blit(sell_text, (10, 110))
 
         font = pygame.font.Font(None, 36)
+        sell_text = font.render("use 1-5 or TAB for item select", True, RED)
+        screen.blit(sell_text, (10, 35))
+
+        font = pygame.font.Font(None, 36)
         move_text = font.render("WASD to move", True, RED)
-        screen.blit(move_text, (10, 190))
+        screen.blit(move_text, (10, 135))
 
         font = pygame.font.Font(None, 36)
         hoe_text = font.render("""use hoe to place crop plot""", True, RED)
-        screen.blit(hoe_text, (10, 210))
+        screen.blit(hoe_text, (10, 160))
 
         font = pygame.font.Font(None, 36)
         seed_text = font.render("""use seeds to plant crops""", True, RED)
-        screen.blit(seed_text, (10, 230))
+        screen.blit(seed_text, (10, 185))
 
         font = pygame.font.Font(None, 36)
         glove_text = font.render("""use glove to harvest crops""", True, RED)
-        screen.blit(glove_text, (10, 250))
+        screen.blit(glove_text, (10, 210))
 
         font = pygame.font.Font(None, 36)
         interact_text = font.render("""press E to interact""", True, RED)
-        screen.blit(interact_text, (10, 270))
+        screen.blit(interact_text, (10, 235))
 
     #current buy and sell controls
     if keys[pygame.K_6]:
