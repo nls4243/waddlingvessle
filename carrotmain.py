@@ -465,6 +465,3 @@ if open_game:
             clock.tick(60)
         # Quit Pygame
         pygame.quit()
-#reminder on how to check collision
-#if sprite1.colliderect(carrotseeds.rect):
-    #print('hit')
