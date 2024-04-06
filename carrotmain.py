@@ -1,10 +1,10 @@
 import pygame
 from pygame import *
 import time
-import random
-import math
 import sys
 import pickle
+import math
+
 
 # Initialize Pygame
 pygame.init()
@@ -14,6 +14,12 @@ window_width, window_height = 1000, 500
 white = (255, 255, 255)
 button_color = (50, 150, 255)
 BLUE = (0, 0, 255)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 153)
+BLUE = (0, 0, 255)
+LBLUE = (0, 255, 255)
 running = True
 open_game = False
 in_pain = True
@@ -90,7 +96,6 @@ if open_game:
         class Counter:
             def __init__(self):
                 self.value = 0
-
             def addscore(self, amount):
                 self.value += amount
 
@@ -120,21 +125,16 @@ if open_game:
 
         background = simplesprite('background.png')
         background.rect.center = (width / 2, height / 2)
-
         carrotitem = simplesprite('justcarrot.png')
-
         carrotseeds = simplesprite('carrotseedpack.png')
-
         gardenhoe = simplesprite('gardenhoe.png')
-
         gardenglove = simplesprite('gardenglove.png')
-    
-
         coin = simplesprite('coin.png')
-
-        hotbarUI = simplesprite('carrothotbarUI.png')
+        blank = simplesprite('blank.png')
+        hotbarUI = simplesprite('CarrotHotBar2.png')
         hotbarUI.rect.center = (width / 2, height - (hotbarUI.rect.height/2))
-
+        inventory = simplesprite('carrotinvUI.png')
+        inventory.rect.center = (width / 2, height / 2)
         highlight = simplesprite('highlight.png')
         highlight.rect.center = (width / 2 - 86, height - (hotbarUI.rect.height/2))
 
@@ -147,6 +147,73 @@ if open_game:
 
         # Define a dictionary to store the state and planting time of each grid square
         grid_state = {(row, col): (0, 0) for row in range(rows) for col in range(cols)}
+
+
+        hotbardict = {
+        "item1":carrotseeds.image,
+        "item2":carrotitem.image,
+        "item3":gardenhoe.image,
+        "item4":gardenglove.image,
+        "item5":coin.image
+        }
+
+        
+        invodict = {
+        "invslot1":blank.image,
+        "invslot2":blank.image,
+        "invslot3":blank.image,
+        "invslot4":blank.image,
+        "invslot5":blank.image,
+        "invslot6":blank.image,
+        "invslot7":blank.image,
+        "invslot8":blank.image,
+        "invslot9":blank.image,
+        "invslot10":blank.image,
+        "invslot11":blank.image,
+        "invslot12":blank.image,
+        "invslot13":blank.image,
+        "invslot14":blank.image,
+        "invslot15":blank.image,
+        "invslot16":blank.image,
+        "invslot17":blank.image,
+        "invslot18":blank.image,
+        "invslot19":blank.image,
+        "invslot20":blank.image,
+        "invslot21":blank.image,
+        "invslot22":blank.image,
+        "invslot23":blank.image,
+        "invslot24":blank.image,
+        "invslot25":blank.image
+        }
+        
+        itemselected = hotbardict["item1"]
+        itemselectedinv = invodict["invslot1"]
+        openinv = False
+        invonum = 0
+        itemnum = 0
+
+
+        def swap():
+            global invonum, itemnum, itemselected, itemselectedinv
+            if itemselected == hotbardict["item1"]:
+                itemselectedinv = hotbardict["item1"]
+                itemnum = 1
+            elif itemselected == hotbardict["item2"]:
+                itemselectedinv = hotbardict["item2"]
+                itemnum = 2
+            elif itemselected == hotbardict["item3"]:
+                itemselectedinv = hotbardict["item3"]
+                itemnum = 3
+            elif itemselected == hotbardict["item4"]:
+                itemselectedinv = hotbardict["item4"]
+                itemnum = 4
+            elif itemselected == hotbardict["item5"]:
+                itemselectedinv = hotbardict["item5"]
+                itemnum = 5
+            else:
+                print("Invalid")
+            itemselected = invodict["invslot"+ str(invonum)]
+            invodict["invslot"+ str(invonum)], hotbardict["item"+ str(itemnum)] = itemselectedinv, itemselected
 
 
     #User Data for file pickeling
@@ -170,12 +237,6 @@ if open_game:
         # Set up clock
         clock = pygame.time.Clock()
     #end of block
-
-        WHITE = (255, 255, 255)
-        BLACK = (0, 0, 0)
-        RED = (255, 0, 0)
-        YELLOW = (255, 255, 153)
-        BLUE = (0, 0, 255)
 
         #music
         volume = 1
@@ -234,6 +295,7 @@ if open_game:
 
             #display background
             screen.blit(background.image, background.rect)
+            
 
             #set where the sprites will be displayed
             carrotitem.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
@@ -241,6 +303,8 @@ if open_game:
             gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
             gardenglove.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 45)
             coin.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+
+
 
             #prevents registering multiple key presses from one
             if move_ticker > 0:
@@ -277,9 +341,6 @@ if open_game:
             if dnum == 4:
                 highlight.rect.center = (width / 2 - 86 + 34*4, height - (hotbarUI.rect.height/2))
 
-            #what item the player is currently holding
-            itemhave = itemdict[dnum]
-
             # creates the grid
             for row in range(rows):
                 for col in range(cols):
@@ -309,72 +370,241 @@ if open_game:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mousex, mousey = pygame.mouse.get_pos()
-                    if mousex < 425 and mousey < 470 and mousex > 395 and mousey > 440:               
+                    print(mousex, mousey)
+                    if mousex > 400 and mousey > 454 and mousex < 430 and mousey < 485 and openinv == False:               
                         dnum = 0
-                    elif mousex < 460 and mousey < 470 and mousex > 425 and mousey > 440:
+                    elif mousex > 433 and mousey > 454 and mousex < 465 and mousey < 485 and openinv == False:
                         dnum = 1
-                    elif mousex < 495 and mousey < 470 and mousex > 460 and mousey > 440:
+                    elif mousex > 468 and mousey > 454 and mousex < 500 and mousey < 485 and openinv == False:
                         dnum = 2
-                    elif mousex < 530 and mousey < 470 and mousex > 495 and mousey > 440:
+                    elif mousex > 501 and mousey > 454 and mousex < 532 and mousey < 485 and openinv == False:
                         dnum = 3
-                    elif mousex < 565 and mousey < 470 and mousex > 530 and mousey > 440:
+                    elif mousex > 535 and mousey > 454 and mousex < 566 and mousey < 485 and openinv == False:
                         dnum = 4
+            if openinv == True and move_ticker == 0:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mousex, mousey = pygame.mouse.get_pos()
+                    if mousex > 376 and mousex < 423 and mousey > 127 and mousey < 172:
+                        invonum = 1
+                        swap()
+                        move_ticker = 20
 
-                elif keys[K_SPACE] and move_ticker == 0:
-                        playerx = sprite1.rect.x + 32
-                        playery = sprite1.rect.y + 32
-                        col = playerx // grid_size
-                        row = playery // grid_size
+                    elif mousex > 427 and mousex < 472 and mousey > 127 and mousey < 172:
+                        invonum = 2
+                        swap()
+                        move_ticker = 20
 
-                        if placing_crop:
-                            # Place empty crop plot if the square is empty
-                            if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
-                                if grid_state[(row, col)][0] == 0 and itemhave == 'hoe' and hoe_durability.value > 0:
-                                    grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
-                                    hoe_durability.addscore(-1)
-                                elif grid_state[(row, col)][0] == 1 and itemhave == 'carrotseed' and carrotseed.value > 0:
-                                    grid_state[(row, col)] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-                                    carrotseed.addscore(-1)
-                                elif grid_state[(row, col)][0] == 3 and itemhave == 'gardenglove':
-                                    grid_state[(row, col)] = (1, 0)
-                                    carrots.addscore(1)
-                        else:
-                            # Plant a new seed if the square has an empty crop plot
-                            if grid_state[(row, col)][0] == 1:
-                                grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and start timer to grow carrot
+                    elif mousex > 478 and mousex < 525 and mousey > 127 and mousey < 172:
+                        invonum = 3
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 529 and mousex < 576 and mousey > 127 and mousey < 172:
+                        invonum = 4
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 580 and mousex < 624 and mousey > 127 and mousey < 172:
+                        invonum = 5
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 376 and mousex < 423 and mousey > 176 and mousey < 221:
+                        invonum = 6
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 427 and mousex < 472 and mousey > 176 and mousey < 221:
+                        invonum = 7
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 478 and mousex < 525 and mousey > 176 and mousey < 221:
+                        invonum = 8
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 529 and mousex < 576 and mousey > 176 and mousey < 221:
+                        invonum = 9
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 580 and mousex < 624 and mousey > 176 and mousey < 221:
+                        invonum = 10
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 376 and mousex < 423 and mousey > 226 and mousey < 272:
+                        invonum = 11
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 427 and mousex < 472 and mousey > 226 and mousey < 272:
+                        invonum = 12
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 478 and mousex < 525 and mousey > 226 and mousey < 272:
+                        invonum = 13
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 529 and mousex < 576 and mousey > 226 and mousey < 272:
+                        invonum = 14
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 580 and mousex < 624 and mousey > 226 and mousey < 272:
+                        invonum = 15
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 376 and mousex < 423 and mousey > 280 and mousey < 322:
+                        invonum = 16
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 427 and mousex < 472 and mousey > 280 and mousey < 322:
+                        invonum = 17
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 478 and mousex < 525 and mousey > 280 and mousey < 322:
+                        invonum = 18
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 529 and mousex < 576 and mousey > 280 and mousey < 322:
+                        invonum = 19
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 580 and mousex < 624 and mousey > 280 and mousey < 322:
+                        invonum = 20
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 376 and mousex < 423 and mousey > 330 and mousey < 374:
+                        invonum = 21
+                        swap()
+                        move_ticker = 20
+
+
+                    elif mousex > 427 and mousex < 472 and mousey > 330 and mousey < 374:
+                        invonum = 22
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 478 and mousex < 525 and mousey > 330 and mousey < 374:
+                        invonum = 23
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 529 and mousex < 576 and mousey > 330 and mousey < 374:
+                        invonum = 24
+                        swap()
+                        move_ticker = 20
+
+                    elif mousex > 580 and mousex < 624 and mousey > 330 and mousey < 374:
+                        invonum = 25
+                        swap()
+                        move_ticker = 20
+
+                    if mousex > 400 and mousey > 454 and mousex < 430 and mousey < 485:
+                        itemselected = hotbardict["item1"]
+                        move_ticker = 20
+                    elif mousex > 433 and mousey > 454 and mousex < 465 and mousey < 485:
+                        itemselected = hotbardict["item2"]
+                        move_ticker = 20
+                    elif mousex > 468 and mousey > 454 and mousex < 500 and mousey < 485:
+                        itemselected = hotbardict["item3"]
+                        move_ticker = 20
+                    elif mousex > 501 and mousey > 454 and mousex < 532 and mousey < 485:
+                        itemselected = hotbardict["item4"]
+                        move_ticker = 20
+                    elif mousex > 535 and mousey > 454 and mousex < 566 and mousey < 485:
+                        itemselected = hotbardict["item5"]
+                        print(str(itemselected))
+                        move_ticker = 20
+                    else:
+                        print("idk anymore")
+
+            itemdict[0] = hotbardict["item1"]
+            itemdict[1] = hotbardict["item2"]
+            itemdict[2] = hotbardict["item3"]
+            itemdict[3] = hotbardict["item4"]
+            itemdict[4] = hotbardict["item5"]
+            itemhave = itemdict[dnum]
+
+            if keys[K_SPACE]:
+                    playerx = sprite1.rect.x + 32
+                    playery = sprite1.rect.y + 32
+                    col = playerx // grid_size
+                    row = playery // grid_size
+                    if grid_state[(row, col)][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
+                        if grid_state[(row, col)][0] == 0 and itemhave == gardenhoe.image and hoe_durability.value > 0:
+                            grid_state[(row, col)] = (1, 0)  # Mark as empty crop plot
+                            hoe_durability.addscore(-1)
+                        elif grid_state[(row, col)][0] == 1 and itemhave == carrotseeds.image and carrotseed.value > 0:
+                            grid_state[(row, col)] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
+                            carrotseed.addscore(-1)
+                        elif grid_state[(row, col)][0] == 3 and itemhave == gardenglove.image:
+                            grid_state[(row, col)] = (1, 0)
+                            carrots.addscore(1)
+                    else:
+                        # Plant a new seed if the square has an empty crop plot
+                        if grid_state[(row, col)][0] == 1:
+                            grid_state[(row, col)] = (2, time.time())  # Mark as seed planted and start timer to grow carrot
 
             #display hotbar
             screen.blit(hotbarUI.image, hotbarUI.rect)
+            screen.blit(hotbardict["item1"], (400, 454))
+            screen.blit(hotbardict["item2"], (433, 454))
+            screen.blit(hotbardict["item3"], (468, 454))
+            screen.blit(hotbardict["item4"], (500, 454))
+            screen.blit(hotbardict["item5"], (534, 454))
             screen.blit(highlight.image, highlight.rect)
 
             # display the player and the item that is in his hand
             all_sprites.draw(screen)
-            if itemhave == 'carrot':
+            if itemhave == carrotitem.image:
                 screen.blit(carrotitem.image, carrotitem.rect)
-            if itemhave == 'carrotseed':
+            if itemhave == carrotseeds.image:
                 screen.blit(carrotseeds.image, carrotseeds.rect)
-            if itemhave == 'hoe':
+            if itemhave == gardenhoe.image:
                 screen.blit(gardenhoe.image, gardenhoe.rect)
-            if itemhave == 'gardenglove':
+            if itemhave == gardenglove.image:
                 screen.blit(gardenglove.image, gardenglove.rect)
-            if itemhave == 'coin':
+            if itemhave == coin.image:
                 screen.blit(coin.image, coin.rect)
+            color1 = BLACK
+            color2 = BLACK
+            color3 = BLACK
+            color4 = BLACK
+            if carrots.value >= 100:
+                color1 = LBLUE
+            if carrotseed.value >= 100:
+                color2 = LBLUE
+            if hoe_durability.value >= 100:
+                color3 = LBLUE
+            if coinage.value >= 100:
+                color4 = LBLUE
 
             # display the number of items a player has
             font = pygame.font.Font(None, 15)
-            carrots_text = font.render(f"{carrots.value}", True, BLACK)
+            carrots_text = font.render(f"{carrots.value}", True, color1)
             screen.blit(carrots_text, (455, 455))
 
             font = pygame.font.Font(None, 15)
-            carrotseed_text = font.render(f"{carrotseed.value}", True, BLACK)
+            carrotseed_text = font.render(f"{carrotseed.value}", True, color2)
             screen.blit(carrotseed_text, (415, 455))
 
             font = pygame.font.Font(None, 15)
-            hoelife_text = font.render(f"{hoe_durability.value}", True, BLACK)
+            hoelife_text = font.render(f"{hoe_durability.value}", True, color3)
             screen.blit(hoelife_text, (490, 455))
 
             font = pygame.font.Font(None, 15)
-            coin_text = font.render(f"{coinage.value}", True, BLACK)
+            coin_text = font.render(f"{coinage.value}", True, color4)
             screen.blit(coin_text, (560, 455))
 
             #esc for controls prompt
@@ -417,7 +647,7 @@ if open_game:
                 screen.blit(glove_text, (10, 210))
 
                 font = pygame.font.Font(None, 36)
-                interact_text = font.render("""press E to interact""", True, RED)
+                interact_text = font.render("""press SPACE to interact""", True, RED)
                 screen.blit(interact_text, (10, 235))
 
                 font = pygame.font.Font(None, 36)
@@ -430,10 +660,11 @@ if open_game:
                 coinage.addscore(carrots.value*2)
                 carrots.value = 0
             if keys[pygame.K_8] and hoe_durability.value < 6 and move_ticker == 0 and carrots.value*2 + coinage.value + carrotseed.value*2 >= 30:
-                hoe_durability.value = 6
-                coinage.addscore(-20)
-                move_ticker = 20
-            if keys[pygame.K_7] and coinage.value >= 10 and move_ticker == 0: #this will always do 2x idk why just leave it
+                if coinage.value >= 20:
+                    hoe_durability.value = 6
+                    coinage.addscore(-20)
+                    move_ticker = 20
+            if keys[pygame.K_7] and coinage.value >= 10 and move_ticker == 0:
                 coinage.addscore(-10)
                 carrotseed.addscore(10)
                 move_ticker = 20
@@ -444,6 +675,40 @@ if open_game:
                 elif volume == 0 and move_ticker == 0:
                     volume = 1
                     move_ticker = 20
+
+            if keys[pygame.K_q] and move_ticker == 0:
+                if openinv == False:
+                    openinv = True
+                elif openinv == True:
+                    openinv = False
+                move_ticker = 20
+            if openinv == True:
+                screen.blit(inventory.image, inventory.rect)
+                screen.blit(invodict["invslot1"], (384, 140))
+                screen.blit(invodict["invslot2"], (434, 140))
+                screen.blit(invodict["invslot3"], (486, 140))
+                screen.blit(invodict["invslot4"], (536, 140))
+                screen.blit(invodict["invslot5"], (588, 140))
+                screen.blit(invodict["invslot6"], (384, 187))
+                screen.blit(invodict["invslot7"], (434, 187))
+                screen.blit(invodict["invslot8"], (486, 187))
+                screen.blit(invodict["invslot9"], (536, 187))
+                screen.blit(invodict["invslot10"], (588, 187))
+                screen.blit(invodict["invslot11"], (384, 240))
+                screen.blit(invodict["invslot12"], (434, 240))
+                screen.blit(invodict["invslot13"], (486, 240))
+                screen.blit(invodict["invslot14"], (536, 240))
+                screen.blit(invodict["invslot15"], (588, 240))
+                screen.blit(invodict["invslot16"], (384, 287))
+                screen.blit(invodict["invslot17"], (434, 287))
+                screen.blit(invodict["invslot18"], (486, 287))
+                screen.blit(invodict["invslot19"], (536, 287))
+                screen.blit(invodict["invslot20"], (588, 287))
+                screen.blit(invodict["invslot21"], (384, 338))
+                screen.blit(invodict["invslot22"], (434, 338))
+                screen.blit(invodict["invslot23"], (486, 338))
+                screen.blit(invodict["invslot24"], (536, 338))
+                screen.blit(invodict["invslot25"], (588, 338))
 
             #update display
             pygame.display.flip()
@@ -457,9 +722,11 @@ if open_game:
                 sprite1.rect.x -= playerspeed
             if keys[pygame.K_d]:
                 sprite1.rect.x += playerspeed
+
             # Cap the player's position
             sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
             sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
+            
 
             # Cap the frame rate
             clock.tick(60)
