@@ -38,22 +38,21 @@ class Game:
     def start(self):
         openinv = True
         playerspeed = 3
-        pygame.display.set_caption("CARROT GAME")
         # Set up display
         screen = pygame.display.set_mode((window_width, window_height))
-        pygame.display.set_caption("Main Window") #pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.RESIZABLE)
+        pygame.display.set_caption("Carrot Game")
 
         mousex, mousey = pygame.mouse.get_pos()
         mouse_rect = pygame.Rect(mousex, mousey,1,1)
 
     # Set up player sprite
         all_sprites = pygame.sprite.Group()
-        sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny2.png')  
+        sprite1 = Sprite(width / 2, height / 2, 50, 50, get_asset_path('bunny2.png'))
 
     # Load images
-        empty_crop_plot = pygame.image.load("emptycropplot.png")
-        carrot_seed_plot = pygame.image.load("carrotseedplot.png")
-        fully_grown_carrot = pygame.image.load("fullygrowncarrot.png")
+        empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
+        carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
+        fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
         background = simplesprite('background.png')
         background.rect.center = (width / 2, height / 2)
         carrotitem = simplesprite('justcarrot.png')
@@ -85,15 +84,12 @@ class Game:
         Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2)) 
         all_sprites.add(sprite1)
 
-    #hotbar assets
+        #hotbar assets
         inventory = simplesprite('carrotinvUI.png')
         inventory.rect.center = (width / 2, height / 2)
 
 
-    # Set up grid
 
-
-    #User Data variables
         #player invetory variables
 
         #ADD THESE TO SAVED DATA LATER
@@ -172,7 +168,6 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
                     self.save()
-                    pygame.quit()
                     return
 
                 #if event.type == pygame.VIDEORESIZE:

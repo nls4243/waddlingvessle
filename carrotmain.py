@@ -3,7 +3,7 @@ from game import *
 
 
 volume = 1
-mixer.music.load('carrots.wav')
+mixer.music.load(get_asset_path('carrots.wav'))
 mixer.music.play(-1)
 
 #starting window loop
