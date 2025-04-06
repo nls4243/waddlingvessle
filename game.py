@@ -21,6 +21,7 @@ class Game:
             json.dump(self.game_data, file)
 
     def __init__(self):
+        self.game_data['mute'] = False
         self.game_data['carrotseed'] = 15
         self.game_data['carrots'] = 0
         self.game_data['hoe_durability'] = 6
@@ -282,10 +283,8 @@ class Game:
                 self.game_data['move_ticker'] = 20
 
             if keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
-                mixer.music.set_volume(0)
-                self.game_data['move_ticker'] = 20
-            elif keys[pygame.K_u] and self.game_data['move_ticker'] == 0:
-                mixer.music.set_volume(1)
+                mixer.music.set_volume(int(self.game_data['mute']))
+                self.game_data['mute'] = not self.game_data['mute']
                 self.game_data['move_ticker'] = 20
 
 
