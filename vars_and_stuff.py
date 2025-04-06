@@ -5,7 +5,7 @@ import sys
 
 
 def get_asset_path(asset):
-    return "assets/" + asset
+	return "assets/" + asset
 
 # Initialize Pygame
 pygame.init()
