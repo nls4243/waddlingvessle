@@ -282,10 +282,10 @@ class Game:
                 self.game_data['move_ticker'] = 20
 
             if keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
-                    mixer.music.set_volume(0)
+                mixer.music.set_volume(0)
+                self.game_data['move_ticker'] = 20
             elif keys[pygame.K_u] and self.game_data['move_ticker'] == 0:
-                    mixer.music.set_volume(1)
-                    
+                mixer.music.set_volume(1)
                 self.game_data['move_ticker'] = 20
 
 
