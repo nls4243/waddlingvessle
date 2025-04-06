@@ -250,14 +250,14 @@ class Game:
 
             font = pygame.font.Font(None, 18)
             carrotseed_text = font.render(f"{self.game_data['carrotseed']}", True, color2)
-            screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1), height - ((hotbarUI.rect.height/2) - 7)))
+            screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1) - 30, height - ((hotbarUI.rect.height/2) - 7)))
             carrots_text = font.render(f"{self.game_data['carrots']}", True, color1)
-            screen.blit(carrots_text, (width / 2 - 86 + (34 * 2), height - ((hotbarUI.rect.height/2)-7 )))
+            screen.blit(carrots_text, (width / 2 - 86 + (34 * 2) - 25, height - ((hotbarUI.rect.height/2)-7 )))
             
             hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, color3)
-            screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3), height - ((hotbarUI.rect.height/2) - 7)))
+            screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3) - 25, height - ((hotbarUI.rect.height/2) - 7)))
             coin_text = font.render(f"{self.game_data['coinage']}", True, color4)            
-            screen.blit(coin_text, (width / 2 - 86 + (34 * 5), height - ((hotbarUI.rect.height/2) - 7)))
+            screen.blit(coin_text, (width / 2 - 86 + (34 * 5) - 25, height - ((hotbarUI.rect.height/2) - 7)))
             
             
     #esc for controls prompt
