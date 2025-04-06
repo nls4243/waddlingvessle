@@ -58,6 +58,7 @@ class Game:
 
 
     def start(self):
+        # start volume
         mixer.music.set_volume(int(not self.game_data['mute']))
 
         openinv = True
