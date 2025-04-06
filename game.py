@@ -185,7 +185,7 @@ class Game:
                     playery = sprite1.rect.y + 32
                     col = playerx // grid_size
                     row = playery // grid_size
-                
+
                     if self.game_data['placing_crop']:
                         # Place empty crop plot if the square is empty
                         if self.game_data['grid_state'][str((row, col))][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
@@ -198,8 +198,8 @@ class Game:
                             elif self.game_data['grid_state'][str((row, col))][0] == 3 and wielded == 'gardenglove':
                                 self.game_data['grid_state'][str((row, col))] = (1, 0)
                                 self.game_data['carrots'] += 1
-                            elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
-                                bonemeal = True
+                            #elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
+                            #    bonemeal = True
     # Plant a new seed if the square has an empty crop plot
                     else:
                         if self.game_data['grid_state'][str((row, col))][0] == 1:
@@ -220,7 +220,7 @@ class Game:
 
     # displaying everything else
             screen.blit(hotbarUI.image, hotbarUI.rect)
-            
+
             for x in range(len(Blanks)):
                 screen.blit(Blanks[x].image, Blanks[x].rect)
 
@@ -228,7 +228,7 @@ class Game:
 
             if openinv == True:
                 screen.blit(inventory.image, inventory.rect)
-            
+
             if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
                 if openinv == False:
                     openinv = True
@@ -255,7 +255,7 @@ class Game:
             screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1) - 30, height - ((hotbarUI.rect.height/2) - 7)))
             carrots_text = font.render(f"{self.game_data['carrots']}", True, color1)
             screen.blit(carrots_text, (width / 2 - 86 + (34 * 2) - 25, height - ((hotbarUI.rect.height/2)-7 )))
-            
+
             hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, color3)
             screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3) - 25, height - ((hotbarUI.rect.height/2) - 7)))
             coin_text = font.render(f"{self.game_data['coinage']}", True, color4)            
@@ -265,7 +265,7 @@ class Game:
     #esc for controls prompt
             controls_text = font.render("*CAUTION* Game Under Construction *CAUTION* ", True, YELLOW)
             screen.blit(controls_text, (10, 10))
-            
+
     #update display
             pygame.display.flip()
 
@@ -273,16 +273,18 @@ class Game:
             if keys[pygame.K_6]:
                 self.game_data['coinage'] += self.game_data['carrots']*2
                 self.game_data['carrots'] = 0
-            if keys[pygame.K_7] and self.game_data['coinage'] >= 10 and self.game_data['move_ticker'] == 0: #this will always do 2x idk why just leave it
+
+            elif keys[pygame.K_7] and self.game_data['coinage'] >= 10 and self.game_data['move_ticker'] == 0: #this will always do 2x idk why just leave it
                 self.game_data['coinage'] -= 10
                 self.game_data['carrotseed'] += 10
                 self.game_data['move_ticker'] = 20
-            if keys[pygame.K_8] and self.game_data['hoe_durability'] < 6 and self.game_data['move_ticker'] == 0 and self.game_data['carrots']*2 + self.game_data['coinage'] + self.game_data['carrotseed'] * 2 >= 30:
+
+            elif keys[pygame.K_8] and self.game_data['hoe_durability'] < 6 and self.game_data['move_ticker'] == 0 and self.game_data['carrots']*2 + self.game_data['coinage'] + self.game_data['carrotseed'] * 2 >= 30:
                 self.game_data['hoe_durability'] = 6
                 self.game_data['coinage'] -= 20
                 self.game_data['move_ticker'] = 20
 
-            if keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
+            elif keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
                 mixer.music.set_volume(int(self.game_data['mute']))
                 self.game_data['mute'] = not self.game_data['mute']
                 self.game_data['move_ticker'] = 20
