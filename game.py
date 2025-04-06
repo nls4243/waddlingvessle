@@ -15,10 +15,10 @@ gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
 highlight = simplesprite('highlight.png')
 hotbarUI = simplesprite('carrothotbarUI.png')
-Up_Arrow = simplesprite('Up_arrow.png')
-Right_Arrow = simplesprite('Right_arrow.png')
-Down_Arrow = simplesprite('Down_arrow.png')
-Left_Arrow = simplesprite('Left_arrow.png')
+#Up_Arrow = simplesprite('Up_arrow.png')
+#Right_Arrow = simplesprite('Right_arrow.png')
+#Down_Arrow = simplesprite('Down_arrow.png')
+#Left_Arrow = simplesprite('Left_arrow.png')
 inventory = simplesprite('carrotinvUI.png')
 
 empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
@@ -86,10 +86,10 @@ class Game:
             Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
 
     #control arrows for mobile
-        Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)
-        Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))
-        Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))
-        Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2))
+        #Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)
+        #Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))
+        #Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))
+        #Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2))
         all_sprites.add(sprite1)
 
         #hotbar assets
