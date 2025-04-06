@@ -60,11 +60,10 @@ class Game:
     def start(self):
         # start volume
         mixer.music.set_volume(int(not self.game_data['mute']))
-
-        openinv = True
-        playerspeed = 3
-        # Set up display
         screen = pygame.display.set_mode((window_width, window_height))
+
+        openinv = False
+        # Set up display
 
         mousex, mousey = pygame.mouse.get_pos()
         mouse_rect = pygame.Rect(mousex, mousey,1,1)

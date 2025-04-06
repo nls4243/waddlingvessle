@@ -56,3 +56,4 @@ grow_time = 10
 
 grid_size = 100
 width, height = (1280, 720) #(1920, 1080) screen.get_size()
+playerspeed = 3
