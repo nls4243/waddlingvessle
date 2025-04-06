@@ -29,19 +29,19 @@ load_saved = False
 
 #sprites
 main_menu = pygame.sprite.Sprite()
-main_menu.image = pygame.image.load('Assets/main_screen.png')
+main_menu.image = pygame.image.load('main_screen.png')
 main_menu.rect = main_menu.image.get_rect()
 main_menu.rect.center = (window_width / 2, window_height / 2)
 new_button = pygame.sprite.Sprite()
-new_button.image = pygame.image.load('Assets/newgame_button.png')
+new_button.image = pygame.image.load('newgame_button.png')
 new_button.rect = new_button.image.get_rect()
 new_button.rect.center = ((window_width / 2)+16, (window_height / 2)+70)
 exit_button = pygame.sprite.Sprite()
-exit_button.image = pygame.image.load('Assets/exit_button.png')
+exit_button.image = pygame.image.load('exit_button.png')
 exit_button.rect = exit_button.image.get_rect()
 exit_button.rect.center = ((window_width / 2)+16, (window_height / 2) + 200)
 load_button = pygame.sprite.Sprite()
-load_button.image = pygame.image.load('Assets/load_button.png')
+load_button.image = pygame.image.load('load_button.png')
 load_button.rect = load_button.image.get_rect()
 load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 load_saved = False
@@ -110,46 +110,46 @@ if open_game:
                             
 # Set up player sprite
     all_sprites = pygame.sprite.Group()
-    sprite1 = Sprite(width / 2, height / 2, 50, 50, 'Assets/bunny2.png')  
+    sprite1 = Sprite(width / 2, height / 2, 50, 50, 'bunny2.png')  
 
 # Load images
-    empty_crop_plot = pygame.image.load("Assets/emptycropplot.png")
-    carrot_seed_plot = pygame.image.load("Assets/carrotseedplot.png")
-    fully_grown_carrot = pygame.image.load("Assets/fullygrowncarrot.png")
-    background = simplesprite('Assets/background.png')
+    empty_crop_plot = pygame.image.load("emptycropplot.png")
+    carrot_seed_plot = pygame.image.load("carrotseedplot.png")
+    fully_grown_carrot = pygame.image.load("fullygrowncarrot.png")
+    background = simplesprite('background.png')
     background.rect.center = (width / 2, height / 2)
-    carrotitem = simplesprite('Assets/justcarrot.png')
-    carrotseeds = simplesprite('Assets/carrotseedpack.png')
-    gardenhoe = simplesprite('Assets/gardenhoe.png')
-    gardenglove = simplesprite('Assets/gardenglove.png')
-    coin = simplesprite('Assets/coin.png')
+    carrotitem = simplesprite('justcarrot.png')
+    carrotseeds = simplesprite('carrotseedpack.png')
+    gardenhoe = simplesprite('gardenhoe.png')
+    gardenglove = simplesprite('gardenglove.png')
+    coin = simplesprite('coin.png')
     
-    hotbarUI = simplesprite('Assets/carrothotbarUI.png')
+    hotbarUI = simplesprite('carrothotbarUI.png')
     """hotbarUI = pygame.transform.scale(hotbarUI, (448,120))"""
     hotbarUI.rect.center = ((width / 2), height - (hotbarUI.rect.height/2))           
-    highlight = simplesprite('Assets/highlight.png')
+    highlight = simplesprite('highlight.png')
     highlight.rect.center = ((width / 2), height - 1000)   
     
 #collision squares for hotbar
-    Blank1 = simplesprite('Assets/blank.png')
+    Blank1 = simplesprite('blank.png')
     Blank1.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
-    Blank2 = simplesprite('Assets/blank.png')
+    Blank2 = simplesprite('blank.png')
     Blank2.rect.center = ((width / 2)-172+68, height - (hotbarUI.rect.height/2))
-    Blank3 = simplesprite('Assets/blank.png')
+    Blank3 = simplesprite('blank.png')
     Blank3.rect.center = ((width / 2)-172+(68*2), height - (hotbarUI.rect.height/2))
-    Blank4 = simplesprite('Assets/blank.png')
+    Blank4 = simplesprite('blank.png')
     Blank4.rect.center = ((width / 2)-172+(68*3), height - (hotbarUI.rect.height/2))
-    Blank5 = simplesprite('Assets/blank.png')
+    Blank5 = simplesprite('blank.png')
     Blank5.rect.center = ((width / 2)-172+(68*4), height - (hotbarUI.rect.height/2))
     
 #control arrows for mobile                
-    Up_Arrow = simplesprite('Assets/Up_arrow.png')
+    Up_Arrow = simplesprite('Up_arrow.png')
     Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)       
-    Down_Arrow = simplesprite('Assets/Down_arrow.png')
+    Down_Arrow = simplesprite('Down_arrow.png')
     Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))      
-    Left_Arrow = simplesprite('Assets/Left_arrow.png')
+    Left_Arrow = simplesprite('Left_arrow.png')
     Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))        
-    Right_Arrow = simplesprite('Assets/Right_arrow.png')
+    Right_Arrow = simplesprite('Right_arrow.png')
     Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2)) 
     all_sprites.add(sprite1)
 
@@ -159,79 +159,79 @@ if open_game:
 
     A8223 = True
     if A8223:
-        BlankHB1 = simplesprite('Assets/blank.png')
+        BlankHB1 = simplesprite('blank.png')
         BlankHB1.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB2 = simplesprite('Assets/blank.png')
+        BlankHB2 = simplesprite('blank.png')
         BlankHB2.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB3 = simplesprite('Assets/blank.png')
+        BlankHB3 = simplesprite('blank.png')
         BlankHB3.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB4 = simplesprite('Assets/blank.png')
+        BlankHB4 = simplesprite('blank.png')
         BlankHB4.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB5 = simplesprite('Assets/blank.png')
+        BlankHB5 = simplesprite('blank.png')
         BlankHB5.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB6 = simplesprite('Assets/blank.png')
+        BlankHB6 = simplesprite('blank.png')
         BlankHB6.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB7 = simplesprite('Assets/blank.png')
+        BlankHB7 = simplesprite('blank.png')
         BlankHB7.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB8 = simplesprite('Assets/blank.png')
+        BlankHB8 = simplesprite('blank.png')
         BlankHB8.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB9 = simplesprite('Assets/blank.png')
+        BlankHB9 = simplesprite('blank.png')
         BlankHB9.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB10 = simplesprite('Assets/blank.png')
+        BlankHB10 = simplesprite('blank.png')
         BlankHB10.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB11 = simplesprite('Assets/blank.png')
+        BlankHB11 = simplesprite('blank.png')
         BlankHB11.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB12 = simplesprite('Assets/blank.png')
+        BlankHB12 = simplesprite('blank.png')
         BlankHB12.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB13 = simplesprite('Assets/blank.png')
+        BlankHB13 = simplesprite('blank.png')
         BlankHB13.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB14 = simplesprite('Assets/blank.png')
+        BlankHB14 = simplesprite('blank.png')
         BlankHB14.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB15 = simplesprite('Assets/blank.png')
+        BlankHB15 = simplesprite('blank.png')
         BlankHB15.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB16 = simplesprite('Assets/blank.png')
+        BlankHB16 = simplesprite('blank.png')
         BlankHB16.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB17 = simplesprite('Assets/blank.png')
+        BlankHB17 = simplesprite('blank.png')
         BlankHB17.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB18 = simplesprite('Assets/blank.png')
+        BlankHB18 = simplesprite('blank.png')
         BlankHB18.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB19 = simplesprite('Assets/blank.png')
+        BlankHB19 = simplesprite('blank.png')
         BlankHB19.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB20 = simplesprite('Assets/blank.png')
+        BlankHB20 = simplesprite('blank.png')
         BlankHB20.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB21 = simplesprite('Assets/blank.png')
+        BlankHB21 = simplesprite('blank.png')
         BlankHB21.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB22 = simplesprite('Assets/blank.png')
+        BlankHB22 = simplesprite('blank.png')
         BlankHB22.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB23 = simplesprite('Assets/blank.png')
+        BlankHB23 = simplesprite('blank.png')
         BlankHB23.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB24 = simplesprite('Assets/blank.png')
+        BlankHB24 = simplesprite('blank.png')
         BlankHB24.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
-        BlankHB25 = simplesprite('Assets/blank.png')
+        BlankHB25 = simplesprite('blank.png')
         BlankHB25.rect.center = ((width / 2)-172, height - (hotbarUI.rect.height/2))
 
 # Set up grid
@@ -274,7 +274,7 @@ if open_game:
 
 #music
     volume = 1
-    mixer.music.load('Assets/carrots.wav')
+    mixer.music.load('carrots.wav')
     mixer.music.play(-1)
 
 #saving variables
