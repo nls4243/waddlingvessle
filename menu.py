@@ -17,7 +17,7 @@ while menu_loop:
     start_window.blit(exit_button.image, exit_button.rect)
     pygame.display.flip()
 
-    #music
+    # music
     
     for event in pygame.event.get():
         #if event.type == pygame.VIDEORESIZE:

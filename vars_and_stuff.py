@@ -4,6 +4,9 @@ import time
 import sys
 
 
+def get_asset_path(asset):
+    return "assets/" + asset
+
 # Initialize Pygame
 pygame.init()
 
@@ -25,19 +28,19 @@ LBLUE = (0, 255, 255)
 
 # Sprites
 main_menu = pygame.sprite.Sprite()
-main_menu.image = pygame.image.load('assets/main_screen.png')
+main_menu.image = pygame.image.load(get_asset_path('main_screen.png'))
 main_menu.rect = main_menu.image.get_rect()
 main_menu.rect.center = (window_width / 2, window_height / 2)
 new_button = pygame.sprite.Sprite()
-new_button.image = pygame.image.load('assets/newgame_button.png')
+new_button.image = pygame.image.load(get_asset_path('newgame_button.png'))
 new_button.rect = new_button.image.get_rect()
 new_button.rect.center = ((window_width / 2)+16, (window_height / 2)+70)
 exit_button = pygame.sprite.Sprite()
-exit_button.image = pygame.image.load('assets/exit_button.png')
+exit_button.image = pygame.image.load(get_asset_path('exit_button.png'))
 exit_button.rect = exit_button.image.get_rect()
 exit_button.rect.center = ((window_width / 2)+16, (window_height / 2) + 200)
 load_button = pygame.sprite.Sprite()
-load_button.image = pygame.image.load('assets/load_button.png')
+load_button.image = pygame.image.load(get_asset_path('load_button.png'))
 load_button.rect = load_button.image.get_rect()
 load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 

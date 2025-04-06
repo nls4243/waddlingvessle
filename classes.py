@@ -1,9 +1,6 @@
 from vars_and_stuff import *
 
 
-def get_asset_path(asset):
-    return "assets/" + asset
-
 # class for player sprite
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, x, y, l, h, png):
