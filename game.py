@@ -71,7 +71,7 @@ class Game:
 
     # Set up player sprite
         all_sprites = pygame.sprite.Group()
-        sprite1 = Sprite(width / 2, height / 2, 50, 50, get_asset_path('bunny2.png'))
+        sprite1 = Sprite(width / 2, height / 2, 50, 50, get_asset_path('bunny1.png'))
 
         background.rect.center = (width / 2, height / 2)
 
