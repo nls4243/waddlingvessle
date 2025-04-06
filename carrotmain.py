@@ -154,7 +154,7 @@ if open_game:
     all_sprites.add(sprite1)
 
 #hotbar assets
-    inventory = simplesprite('assets2/carrotinvUI.png')
+    inventory = simplesprite('carrotinvUI.png')
     inventory.rect.center = (width / 2, height / 2)
 
     A8223 = True
