@@ -1,14 +1,5 @@
 from vars_and_stuff import *
 
-class Counter:
-    def __init__(self, value):
-        self.value = value
-
-    def addscore(self, amount):
-        self.value += amount
-
-    def setscore(self, amount):
-        self.value = amount
 
 # class for player sprite
 class Sprite(pygame.sprite.Sprite):

@@ -172,6 +172,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
                     self.save()
+                    pygame.quit()
                     return
 
                 #if event.type == pygame.VIDEORESIZE:
@@ -310,5 +311,3 @@ class Game:
             sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
     # Cap the frame rate
             clock.tick(60)
-    # Quit Pygame
-        pygame.quit()
