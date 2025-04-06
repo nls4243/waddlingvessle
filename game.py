@@ -5,13 +5,25 @@ import json
 
 
 
+
+# load sprite assets
 background = simplesprite('background.png')
 carrotitem = simplesprite('justcarrot.png')
 carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
 gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
+highlight = simplesprite('highlight.png')
+hotbarUI = simplesprite('carrothotbarUI.png')
+Up_Arrow = simplesprite('Up_arrow.png')
+Right_Arrow = simplesprite('Right_arrow.png')
+Down_Arrow = simplesprite('Down_arrow.png')
+Left_Arrow = simplesprite('Left_arrow.png')
+inventory = simplesprite('carrotinvUI.png')
 
+empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
+carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
+fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
 
 
 
@@ -41,13 +53,17 @@ class Game:
         #dictionary to store the state and planting time of each grid square
         self.game_data['grid_state'] = {str((row, col)): (0, 0) for row in range(self.rows) for col in range(self.cols)}
 
+        pygame.display.set_caption("Carrot Game")
+
+
 
     def start(self):
+        mixer.music.set_volume(int(not self.game_data['mute']))
+
         openinv = True
         playerspeed = 3
         # Set up display
         screen = pygame.display.set_mode((window_width, window_height))
-        pygame.display.set_caption("Carrot Game")
 
         mousex, mousey = pygame.mouse.get_pos()
         mouse_rect = pygame.Rect(mousex, mousey,1,1)
@@ -56,16 +72,10 @@ class Game:
         all_sprites = pygame.sprite.Group()
         sprite1 = Sprite(width / 2, height / 2, 50, 50, get_asset_path('bunny2.png'))
 
-    # Load images
-        empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
-        carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
-        fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
         background.rect.center = (width / 2, height / 2)
 
-        hotbarUI = simplesprite('carrothotbarUI.png')
         """hotbarUI = pygame.transform.scale(hotbarUI, (448,120))"""
         hotbarUI.rect.center = ((width / 2), height - (hotbarUI.rect.height/2))           
-        highlight = simplesprite('highlight.png')
         highlight.rect.center = ((width / 2), height - 1000)   
 
     #collision squares for hotbar
@@ -74,19 +84,14 @@ class Game:
             Blanks[x] = simplesprite('blank.png')
             Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
 
-    #control arrows for mobile                
-        Up_Arrow = simplesprite('Up_arrow.png')
-        Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)       
-        Down_Arrow = simplesprite('Down_arrow.png')
-        Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))      
-        Left_Arrow = simplesprite('Left_arrow.png')
-        Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))        
-        Right_Arrow = simplesprite('Right_arrow.png')
-        Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2)) 
+    #control arrows for mobile
+        Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)
+        Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))
+        Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))
+        Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2))
         all_sprites.add(sprite1)
 
         #hotbar assets
-        inventory = simplesprite('carrotinvUI.png')
         inventory.rect.center = (width / 2, height / 2)
 
         # Set up clock

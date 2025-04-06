@@ -2,13 +2,14 @@ from game import *
 
 
 
-volume = 1
 mixer.music.load(get_asset_path('carrots.wav'))
 mixer.music.play(-1)
 
 #starting window loop
 menu_loop = True
 while menu_loop:
+    mixer.music.set_volume(0)
+
     mousex, mousey = pygame.mouse.get_pos()
     mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
     start_window.blit(main_menu.image, main_menu.rect)

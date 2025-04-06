@@ -45,6 +45,8 @@ load_button.rect = load_button.image.get_rect()
 load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 
 
+
+
 itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
 
 
