@@ -280,12 +280,11 @@ class Game:
                 self.game_data['hoe_durability'] = 6
                 self.game_data['coinage'] -= 20
                 self.game_data['move_ticker'] = 20
-            if keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
-                if volume > 0:
-                    volume = 0
 
-                elif volume == 0:
-                    volume = 1
+            if keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
+                    mixer.music.set_volume(0)
+            elif keys[pygame.K_u] and self.game_data['move_ticker'] == 0:
+                    mixer.music.set_volume(1)
                     
                 self.game_data['move_ticker'] = 20
 
