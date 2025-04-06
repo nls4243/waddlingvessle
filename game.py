@@ -125,7 +125,7 @@ class Game:
             gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
             gardenglove.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 45)
             coin.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
-            
+
             #hotbar and wieled
             if keys[pygame.K_1]:
                 self.game_data['dnum'] = 0
@@ -138,7 +138,7 @@ class Game:
             elif keys[pygame.K_5]:
                 self.game_data['dnum'] = 4
 
-            highlight.rect.center = (width / 2 - 172 + (68 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
+            highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
             wielded = itemdict[self.game_data['dnum']]
 
 
@@ -248,16 +248,16 @@ class Game:
             if self.game_data['coinage'] >= 100:
                 color4 = LBLUE
 
-            font = pygame.font.Font(None, 45)
+            font = pygame.font.Font(None, 18)
             carrotseed_text = font.render(f"{self.game_data['carrotseed']}", True, color2)
-            screen.blit(carrotseed_text, (width/2-172, height - (hotbarUI.rect.height / 2)))
+            screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1), height - ((hotbarUI.rect.height/2) - 7)))
             carrots_text = font.render(f"{self.game_data['carrots']}", True, color1)
-            screen.blit(carrots_text, (width/2-172+68, height - (hotbarUI.rect.height / 2)))
+            screen.blit(carrots_text, (width / 2 - 86 + (34 * 2), height - ((hotbarUI.rect.height/2)-7 )))
             
             hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, color3)
-            screen.blit(hoelife_text, (width/2-172+68*2, height - (hotbarUI.rect.height / 2)))
+            screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3), height - ((hotbarUI.rect.height/2) - 7)))
             coin_text = font.render(f"{self.game_data['coinage']}", True, color4)            
-            screen.blit(coin_text, (width/2-172+68*4, height - (hotbarUI.rect.height / 2)))
+            screen.blit(coin_text, (width / 2 - 86 + (34 * 5), height - ((hotbarUI.rect.height/2) - 7)))
             
             
     #esc for controls prompt
