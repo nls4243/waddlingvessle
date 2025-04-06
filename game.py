@@ -5,6 +5,12 @@ import json
 
 
 
+background = simplesprite('background.png')
+carrotitem = simplesprite('justcarrot.png')
+carrotseeds = simplesprite('carrotseedpack.png')
+gardenhoe = simplesprite('gardenhoe.png')
+gardenglove = simplesprite('gardenglove.png')
+coin = simplesprite('coin.png')
 
 
 
@@ -54,26 +60,20 @@ class Game:
         empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
         carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
         fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
-        background = simplesprite('background.png')
         background.rect.center = (width / 2, height / 2)
-        carrotitem = simplesprite('justcarrot.png')
-        carrotseeds = simplesprite('carrotseedpack.png')
-        gardenhoe = simplesprite('gardenhoe.png')
-        gardenglove = simplesprite('gardenglove.png')
-        coin = simplesprite('coin.png')
-        
+
         hotbarUI = simplesprite('carrothotbarUI.png')
         """hotbarUI = pygame.transform.scale(hotbarUI, (448,120))"""
         hotbarUI.rect.center = ((width / 2), height - (hotbarUI.rect.height/2))           
         highlight = simplesprite('highlight.png')
         highlight.rect.center = ((width / 2), height - 1000)   
-        
+
     #collision squares for hotbar
         Blanks = {}
         for x in range(0, 1):
             Blanks[x] = simplesprite('blank.png')
             Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
-        
+
     #control arrows for mobile                
         Up_Arrow = simplesprite('Up_arrow.png')
         Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)       
@@ -88,14 +88,6 @@ class Game:
         #hotbar assets
         inventory = simplesprite('carrotinvUI.png')
         inventory.rect.center = (width / 2, height / 2)
-
-
-
-        #player invetory variables
-
-        #ADD THESE TO SAVED DATA LATER
-        #growing variables
-        grow_time = 10
 
         # Set up clock
         clock = pygame.time.Clock()
@@ -200,7 +192,7 @@ class Game:
                                 self.game_data['carrots'] += 1
                             elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
                                 bonemeal = True
-    # Plant a new seed if the square has an empty crop plot                               
+    # Plant a new seed if the square has an empty crop plot
                     else:
                         if self.game_data['grid_state'][str((row, col))][0] == 1:
                             self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
@@ -218,7 +210,7 @@ class Game:
             if wielded == 'coin':
                 screen.blit(coin.image, coin.rect)
 
-    # displaying everything else   
+    # displaying everything else
             screen.blit(hotbarUI.image, hotbarUI.rect)
             
             for x in range(len(Blanks)):
@@ -236,7 +228,7 @@ class Game:
                     openinv = False
                 self.game_data['move_ticker'] = 20
 
-    # display the number of items a player has     
+    # display the number of items a player has
             color1 = BLACK
             color2 = BLACK
             color3 = BLACK
@@ -262,7 +254,7 @@ class Game:
             screen.blit(coin_text, (width/2-172+68*4, height - (hotbarUI.rect.height / 2)))
             
             
-    #esc for controls prompt            
+    #esc for controls prompt
             controls_text = font.render("*CAUTION* Game Under Construction *CAUTION* ", True, YELLOW)
             screen.blit(controls_text, (10, 10))
             

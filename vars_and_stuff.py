@@ -48,6 +48,9 @@ load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
 
 
+# To be moved
+
+grow_time = 10
 
 grid_size = 100
 width, height = (1280, 720) #(1920, 1080) screen.get_size()
