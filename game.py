@@ -236,6 +236,8 @@ class Game:
 
 
 
+			# Inv
+
 			if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
 				self.game_data['openinv'] = not self.game_data['openinv']
 				self.game_data['move_ticker'] = key_cooldown
@@ -251,6 +253,12 @@ class Game:
 
 						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
 						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
+
+				pointer = carrotitem
+				px = pointer.rect.width
+				py = pointer.rect.height
+				screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
+				
 
 			
 			
