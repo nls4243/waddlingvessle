@@ -25,17 +25,13 @@ gardenhoe = simplesprite('gardenhoe.png')
 gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
 
-itemdict_r = {
+itemdict = {
 	'carrotseed' : {'item' : 'carrotseed', 'sprite' : carrotseeds},
 	'carrot' : {'item' : 'carrot', 'sprite' : carrotitem},
 	'hoe' : {'item' : 'hoe', 'sprite' : gardenhoe},
 	'gardenglove' : {'item' : 'gardenglove', 'sprite' : gardenglove},
 	'coin' : {'item' : 'coin', 'sprite' : coin}
 }
-
-itemdict = []
-for _, v in itemdict_r.items():
-	itemdict.insert(len(itemdict), v)
 
 
 class Game:
@@ -143,7 +139,7 @@ class Game:
 				self.game_data['dnum'] = 4
 
 			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
-			wielded = itemdict[self.game_data['dnum']]
+			wielded = itemdict[self.inventory.value[self.game_data['dnum']].item]
 			wielded['sprite'].rect.center = (player.rect.x + 10, player.rect.y + 35)
 
 
@@ -226,7 +222,7 @@ class Game:
 			y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(0, 5):
 				if self.inventory.value[i].item != "":
-					screen.blit(itemdict_r[self.inventory.value[i].item]['sprite'].image, (x + (i * 34), y))
+					screen.blit(itemdict[self.inventory.value[i].item]['sprite'].image, (x + (i * 34), y))
 
 					carrots_text = font.render(f"{self.inventory.value[i].count}", True, LBLUE)
 					screen.blit(carrots_text, (x + (i * 34), y + 30))
@@ -246,7 +242,7 @@ class Game:
 				y = inventory.rect.y + 30
 				for i in range(0, 24):
 					if self.inventory.value[i].item != "":
-						screen.blit(itemdict_r[self.inventory.value[i].item]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
+						screen.blit(itemdict[self.inventory.value[i].item]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
 
 						carrots_text = font.render(f"{self.inventory.value[i].count}", True, BLACK)
 						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
