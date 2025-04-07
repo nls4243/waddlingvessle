@@ -7,10 +7,12 @@ import json
 
 
 # load sprite assets
-background = simplesprite('background.png')
-highlight = simplesprite('highlight.png')
-hotbarUI = simplesprite('carrothotbarUI.png')
-inventory = simplesprite('carrotinvUI.png')
+background = simplesprite('background.png', (width / 2, height / 2))
+highlight = simplesprite('highlight.png', ((width / 2), height - 1000))
+hotbarUI = simplesprite('carrothotbarUI.png', (width / 2, height - 30))
+inventory = simplesprite('carrotinvUI.png', (width / 2, height / 2))
+
+player = simplesprite('bunny1.png', (width / 2, height / 2))
 
 empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
 carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
@@ -82,22 +84,7 @@ class Game:
 		mousex, mousey = pygame.mouse.get_pos()
 		mouse_rect = pygame.Rect(mousex, mousey,1,1)
 
-	# Set up player sprite
-		all_sprites = pygame.sprite.Group()
-		sprite1 = Sprite(width / 2, height / 2, get_asset_path('bunny1.png'))
 
-		background.rect.center = (width / 2, height / 2)
-
-		"""hotbarUI = pygame.transform.scale(hotbarUI, (448,120))"""
-		hotbarUI.rect.center = ((width / 2), height - (hotbarUI.rect.height/2))           
-		highlight.rect.center = ((width / 2), height - 1000)   
-
-
-
-		all_sprites.add(sprite1)
-
-		#hotbar assets
-		inventory.rect.center = (width / 2, height / 2)
 
 		# Set up clock
 		clock = pygame.time.Clock()
@@ -139,7 +126,7 @@ class Game:
 
 			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
 			wielded = itemdict[self.game_data['dnum']]
-			wielded['sprite'].rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
+			wielded['sprite'].rect.center = (player.rect.x + 10, player.rect.y + 35)
 
 
 
@@ -175,9 +162,9 @@ class Game:
 							self.game_data['dnum'] = x
 							break
 
-				if sprite1.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
-					playerx = sprite1.rect.x + 32
-					playery = sprite1.rect.y + 32
+				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
+					playerx = player.rect.x + 32
+					playery = player.rect.y + 32
 					col = playerx // self.game_data['grid_size']
 					row = playery // self.game_data['grid_size']
 
@@ -200,7 +187,7 @@ class Game:
 							self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
 
 			# displays everything that need to be on top
-			all_sprites.draw(screen)
+			screen.blit(player.image, player.rect)
 			screen.blit(wielded['sprite'].image, wielded['sprite'].rect)
 
 			# displaying everything else
@@ -285,17 +272,17 @@ class Game:
 			# Move the player
 
 			if keys[pygame.K_w]:
-				sprite1.rect.y -= playerspeed
+				player.rect.y -= playerspeed
 			elif keys[pygame.K_s]:
-				sprite1.rect.y += playerspeed
+				player.rect.y += playerspeed
 			# Cap the player's position
-			sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
+			player.rect.y = max(0, min(player.rect.y, height - player.rect.height))
 
 			if keys[pygame.K_a]:
-				sprite1.rect.x -= playerspeed
+				player.rect.x -= playerspeed
 			elif keys[pygame.K_d]:
-				sprite1.rect.x += playerspeed
+				player.rect.x += playerspeed
 			# Cap the player's position
-			sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
+			player.rect.x = max(0, min(player.rect.x, width - player.rect.width))
 
 			clock.tick(60)
