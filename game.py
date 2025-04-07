@@ -12,7 +12,7 @@ highlight = simplesprite('highlight.png', ((width / 2), height - 1000))
 hotbarUI = simplesprite('carrothotbarUI.png', (width / 2, height - 30))
 inventory = simplesprite('carrotinvUI.png', (width / 2, height / 2))
 
-player = simplesprite('bunny1.png', (width / 2, height / 2))
+player = None
 
 empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
 carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
@@ -42,13 +42,17 @@ class Game:
 			data_in = json.load(file)
 		for key, value in data_in.items():
 			self.game_data[key] = value
-	
+
 	def _save(self):
+		# Save data only used at start/save times
+		self.game_data['player_pos'] = player.rect.center
+
 		with open("saveddata" + ".json", "w") as file:
 			json.dump(self.game_data, file)
 
 	def __init__(self, load = False):
 		# initial setup
+		pygame.display.set_caption("Carrot Game")
 
 		self.game_data['mute'] = False
 		self.game_data['carrotseed'] = 15
@@ -59,23 +63,29 @@ class Game:
 		self.game_data['move_ticker'] = 0
 		self.game_data['dnum'] = 0
 		self.game_data['grid_size'] = 50
+		self.game_data['openinv'] = False
 
 		self.rows, self.cols = width // self.game_data['grid_size'], width // self.game_data['grid_size']
 		self.grid = [[0] * self.cols for _ in range(self.rows)]
-		#dictionary to store the state and planting time of each grid square
+		# Dictionary to store the state and planting time of each grid square
 		self.game_data['grid_state'] = {str((row, col)): (0, 0) for row in range(self.rows) for col in range(self.cols)}
-
-		pygame.display.set_caption("Carrot Game")
 
 		self.Blanks = {}
 		for x in range(0, 1):
 			self.Blanks[x] = simplesprite('blank.png')
 			self.Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
 
+		# Only used at start/save time data
+		self.game_data['player_pos'] = (width / 2, height / 2)
+
 
 		# Load
 		if load:
 			self._load()
+
+
+		global player
+		player = simplesprite('bunny1.png', self.game_data['player_pos'])
 
 
 		# ambiance
@@ -87,25 +97,8 @@ class Game:
 
 
 	def _start(self):
-		# start volume
-
-		openinv = False
-
-		# Set up display
-		mousex, mousey = pygame.mouse.get_pos()
-		mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
-
-
-
-		# Set up clock
 		clock = pygame.time.Clock()
 
-
-		# Set up display
-		#screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.RESIZABLE)
-		#width, height = screen.get_size()
-
-		#main while loop
 		while True:
 			#variables that need to be in the loop
 			keys = pygame.key.get_pressed()
@@ -211,10 +204,10 @@ class Game:
 
 
 			if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
-				openinv = not openinv
+				self.game_data['openinv'] = not self.game_data['openinv']
 				self.game_data['move_ticker'] = key_cooldown
 
-			if openinv:
+			if self.game_data['openinv']:
 				screen.blit(inventory.image, inventory.rect)
 
 
