@@ -24,13 +24,15 @@ carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
 gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
+noitem = simplesprite('blank.png')
 
 itemdict = {
 	'carrotseed' : {'item' : 'carrotseed', 'sprite' : carrotseeds},
 	'carrot' : {'item' : 'carrot', 'sprite' : carrotitem},
 	'hoe' : {'item' : 'hoe', 'sprite' : gardenhoe},
 	'gardenglove' : {'item' : 'gardenglove', 'sprite' : gardenglove},
-	'coin' : {'item' : 'coin', 'sprite' : coin}
+	'coin' : {'item' : 'coin', 'sprite' : coin},
+	'' : {'item' : '', 'sprite' : noitem}
 }
 
 
