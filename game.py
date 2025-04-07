@@ -32,8 +32,11 @@ class Game:
 	game_data = {}
 
 	def load(self):
+		data_in = {}
 		with open("saveddata.json", "r") as file:
-			self.game_data = json.load(file)
+			data_in = json.load(file)
+		for key, value in data_in.items():
+			self.game_data[key] = value
 	
 	def save(self):
 		with open("saveddata" + ".json", "w") as file:
@@ -48,8 +51,9 @@ class Game:
 		self.game_data['placing_crop'] = True
 		self.game_data['move_ticker'] = 0
 		self.game_data['dnum'] = 0
+		self.game_data['grid_size'] = 50
 
-		self.rows, self.cols = width // grid_size, width // grid_size
+		self.rows, self.cols = width // self.game_data['grid_size'], width // self.game_data['grid_size']
 		self.grid = [[0] * self.cols for _ in range(self.rows)]
 		#dictionary to store the state and planting time of each grid square
 		self.game_data['grid_state'] = {str((row, col)): (0, 0) for row in range(self.rows) for col in range(self.cols)}
@@ -148,7 +152,7 @@ class Game:
 			# creates the grid
 			for row in range(self.rows):
 				for col in range(self.cols):
-					rect = pygame.Rect(col * grid_size, row * grid_size, grid_size, grid_size)
+					rect = pygame.Rect(col * self.game_data['grid_size'], row * self.game_data['grid_size'], self.game_data['grid_size'], self.game_data['grid_size'])
 
 					# Display the appropriate crop grow stage based on the grid state
 					state, planting_time = self.game_data['grid_state'][str((row, col))]
@@ -183,8 +187,8 @@ class Game:
 				if sprite1.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
 					playerx = sprite1.rect.x + 32
 					playery = sprite1.rect.y + 32
-					col = playerx // grid_size
-					row = playery // grid_size
+					col = playerx // self.game_data['grid_size']
+					row = playery // self.game_data['grid_size']
 
 					if self.game_data['placing_crop']:
 						# Place empty crop plot if the square is empty

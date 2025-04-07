@@ -18,3 +18,10 @@ class simplesprite(pygame.sprite.Sprite):
 		self.image = pygame.image.load(get_asset_path(png))
 		self.rect = self.image.get_rect()
 		self.rect.center = (1, 1)
+
+
+
+class Inventory:
+	value = []
+	def _init__(self):
+		print("")
