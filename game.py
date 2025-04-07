@@ -112,6 +112,8 @@ class Game:
 	def _start(self):
 		clock = pygame.time.Clock()
 
+		moving_item = False
+		mouse_button_state = False
 		while True:
 			#variables that need to be in the loop
 			keys = pygame.key.get_pressed()
@@ -175,11 +177,16 @@ class Game:
 				#if event.type == pygame.VIDEORESIZE:
 				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
+					mouse_button_state = True
+
 					mousex, mousey = pygame.mouse.get_pos()
 					for x in range(len(self.Blanks)):
 						if self.Blanks[x].rect.colliderect(mouse_rect):
 							self.game_data['dnum'] = x
 							break
+				else:
+					mouse_button_state = False
+
 
 				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
 					col, row = player.rect.center
@@ -243,6 +250,11 @@ class Game:
 				self.game_data['move_ticker'] = key_cooldown
 
 			if self.game_data['openinv']:
+				if mouse_button_state:
+					moving_item = True
+				else:
+					moving_item = False
+
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
@@ -254,10 +266,14 @@ class Game:
 						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
 						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
 
-				pointer = carrotitem
-				px = pointer.rect.width
-				py = pointer.rect.height
-				screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
+				if moving_item:
+					pointer = carrotitem
+					px = pointer.rect.width
+					py = pointer.rect.height
+					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
+
+			else:
+				moving_item = False
 				
 
 			
