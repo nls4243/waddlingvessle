@@ -173,21 +173,25 @@ class Game:
 
 					if self.game_data['placing_crop']:
 						# Place empty crop plot if the square is empty
-						if self.game_data['grid_state'][str((row, col))][0] == 0 and wielded['item'] == 'hoe' and self.game_data['hoe_durability'] > 0:
-							self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
-							self.game_data['hoe_durability'] -= 1
-						elif self.game_data['grid_state'][str((row, col))][0] == 1 and wielded['item'] == 'carrotseed' and self.game_data['carrotseed'] > 0:
-							self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-							self.game_data['carrotseed'] -= 1
-						elif self.game_data['grid_state'][str((row, col))][0] == 3 and wielded['item'] == 'gardenglove':
-							self.game_data['grid_state'][str((row, col))] = (1, 0)
-							self.game_data['carrots'] += 1
-						#elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
-						#    bonemeal = True
+						match self.game_data['grid_state'][str((row, col))][0]:
+							case 0:
+								if  wielded['item'] == 'hoe' and self.game_data['hoe_durability'] > 0:
+									self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
+									self.game_data['hoe_durability'] -= 1
+							case 1:
+								if wielded['item'] == 'carrotseed' and self.game_data['carrotseed'] > 0:
+									self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
+									self.game_data['carrotseed'] -= 1
+							case 3:
+								if wielded['item'] == 'gardenglove':
+									self.game_data['grid_state'][str((row, col))] = (1, 0)
+									self.game_data['carrots'] += 1
+
 					# Plant a new seed if the square has an empty crop plot
 					else:
-						if self.game_data['grid_state'][str((row, col))][0] == 1:
-							self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
+						match self.game_data['grid_state'][str((row, col))][0]:
+							case 1:
+								self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
 
 			# displays everything that need to be on top
 			screen.blit(player.image, player.rect)
