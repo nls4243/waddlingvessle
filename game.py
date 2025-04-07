@@ -271,7 +271,7 @@ class Game:
 					self.game_data['carrotseed'] += 10
 					self.game_data['move_ticker'] = key_cooldown
 
-				elif keys[pygame.K_8] and self.game_data['coinage'] >= 30:
+				elif keys[pygame.K_8] and self.game_data['coinage'] >= 20 and self.game_data['carrotseed']*2 + self.game_data['carrots']*2 + self.game_data['coinage'] >= 30:
 					self.game_data['hoe_durability'] += 6
 					self.game_data['coinage'] -= 20
 					self.game_data['move_ticker'] = key_cooldown
@@ -299,4 +299,3 @@ class Game:
 			sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
 
 			clock.tick(60)
-d
