@@ -11,8 +11,8 @@ def get_asset_path(asset):
 pygame.init()
 
 # Create the starting window
-window_width, window_height = (1280, 720) #start_window.get_size()
-start_window = pygame.display.set_mode((window_width, window_height))
+window_width, window_height = (1280, 720) #screen.get_size()
+screen = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Carrot Game") #pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.RESIZABLE)
 
 # Consts
@@ -47,7 +47,7 @@ load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 
 
 
-itemdict = ['carrotseed', 'carrot', 'hoe', 'gardenglove', 'coin']
+key_cooldown = 10
 
 
 # To be moved

@@ -5,6 +5,11 @@ from game import *
 mixer.music.load(get_asset_path('carrots.wav'))
 mixer.music.play(-1)
 
+def end():
+	pygame.quit()
+	exit()
+
+
 #starting window loop
 menu_loop = True
 while menu_loop:
@@ -12,22 +17,21 @@ while menu_loop:
 
 	mousex, mousey = pygame.mouse.get_pos()
 	mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
-	start_window.blit(main_menu.image, main_menu.rect)
-	start_window.blit(new_button.image, new_button.rect)
-	start_window.blit(load_button.image, load_button.rect)
-	start_window.blit(exit_button.image, exit_button.rect)
+	screen.blit(main_menu.image, main_menu.rect)
+	screen.blit(new_button.image, new_button.rect)
+	screen.blit(load_button.image, load_button.rect)
+	screen.blit(exit_button.image, exit_button.rect)
 	pygame.display.flip()
+	keys = pygame.key.get_pressed()
+	
 
 	# music
 	
 	for event in pygame.event.get():
 		#if event.type == pygame.VIDEORESIZE:
 			 #width, height = event.w, event.h
-		if event.type == pygame.QUIT:
-			pygame.quit()
-			exit()
 
-		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			if new_button.rect.colliderect(mouse_rect):
 				game = Game()
 				game.start()
@@ -38,6 +42,7 @@ while menu_loop:
 				game.start()
 
 			elif exit_button.rect.colliderect(mouse_rect):
-				pygame.quit()
-				exit()
+				end()
 
+		elif event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+			end()

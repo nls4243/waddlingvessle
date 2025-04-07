@@ -8,24 +8,27 @@ import json
 
 # load sprite assets
 background = simplesprite('background.png')
-carrotitem = simplesprite('justcarrot.png')
-carrotseeds = simplesprite('carrotseedpack.png')
-gardenhoe = simplesprite('gardenhoe.png')
-gardenglove = simplesprite('gardenglove.png')
-coin = simplesprite('coin.png')
 highlight = simplesprite('highlight.png')
 hotbarUI = simplesprite('carrothotbarUI.png')
 inventory = simplesprite('carrotinvUI.png')
-
-#Down_Arrow = simplesprite('Down_arrow.png') # Mobil
-#Left_Arrow = simplesprite('Left_arrow.png') # Mobil
-#Up_Arrow = simplesprite('Up_arrow.png') # Mobil
-#Right_Arrow = simplesprite('Right_arrow.png') # Mobil
 
 empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
 carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
 fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
 
+
+carrotitem = simplesprite('justcarrot.png')
+carrotseeds = simplesprite('carrotseedpack.png')
+gardenhoe = simplesprite('gardenhoe.png')
+gardenglove = simplesprite('gardenglove.png')
+coin = simplesprite('coin.png')
+itemdict = [
+	{'item' : 'carrotseed', 'sprite' : carrotseeds},
+	{'item' : 'carrot', 'sprite' : carrotitem},
+	{'item' : 'hoe', 'sprite' : gardenhoe},
+	{'item' : 'gardenglove', 'sprite' : gardenglove},
+	{'item' : 'coin', 'sprite' : coin}
+]
 
 
 class Game:
@@ -62,14 +65,20 @@ class Game:
 
 
 
+		self.Blanks = {}
+		for x in range(0, 1):
+			self.Blanks[x] = simplesprite('blank.png')
+			self.Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
+
+
+
 	def start(self):
 		# start volume
 		mixer.music.set_volume(int(not self.game_data['mute']))
-		screen = pygame.display.set_mode((window_width, window_height))
 
 		openinv = False
-		# Set up display
 
+		# Set up display
 		mousex, mousey = pygame.mouse.get_pos()
 		mouse_rect = pygame.Rect(mousex, mousey,1,1)
 
@@ -83,17 +92,6 @@ class Game:
 		hotbarUI.rect.center = ((width / 2), height - (hotbarUI.rect.height/2))           
 		highlight.rect.center = ((width / 2), height - 1000)   
 
-	#collision squares for hotbar
-		Blanks = {}
-		for x in range(0, 1):
-			Blanks[x] = simplesprite('blank.png')
-			Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
-
-	#control arrows for mobile
-		#Up_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2)-140)
-		#Down_Arrow.rect.center = (width/2, height - (hotbarUI.rect.height/2))
-		#Left_Arrow.rect.center = ((width/2)-140, height - (hotbarUI.rect.height/2))
-		#Right_Arrow.rect.center = ((width/2)+140, height - (hotbarUI.rect.height/2))
 
 
 		all_sprites.add(sprite1)
@@ -105,32 +103,27 @@ class Game:
 		clock = pygame.time.Clock()
 
 
-	# Set up display
-			#screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.RESIZABLE)
-			#width, height = screen.get_size()
+		# Set up display
+		#screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.RESIZABLE)
+		#width, height = screen.get_size()
 
-	#main while loop
+		#main while loop
 		while True:
-	#variables that need to be in the loop
+			#variables that need to be in the loop
 			keys = pygame.key.get_pressed()
 			mousex, mousey = pygame.mouse.get_pos()
 			mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
 
 			#prevents multiple key presses from one
-			if self.game_data['move_ticker'] > 0:
+			if self.game_data['move_ticker'] >= 1:
 				self.game_data['move_ticker'] -= 1
-			if self.game_data['move_ticker'] < 0:
+			elif self.game_data['move_ticker'] != 0:
 				self.game_data['move_ticker'] = 0
 
 
 			#display background
 			screen.blit(background.image, background.rect)
 			#set where the sprites will be displayed
-			carrotitem.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
-			carrotseeds.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
-			gardenhoe.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
-			gardenglove.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 45)
-			coin.rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
 
 			#hotbar and wieled
 			if keys[pygame.K_1]:
@@ -146,6 +139,7 @@ class Game:
 
 			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
 			wielded = itemdict[self.game_data['dnum']]
+			wielded['sprite'].rect.center = (sprite1.rect.x + 10, sprite1.rect.y + 35)
 
 
 
@@ -162,25 +156,22 @@ class Game:
 						screen.blit(carrot_seed_plot, rect.topleft)
 					elif state == 3:
 						screen.blit(fully_grown_carrot, rect.topleft)
-					#DO NOT REMOVE STATE 4 THIS WILL MAKE THE CODE STOP WORKING I DO NOT KNOW WHY
-					elif state == 4:
-						screen.blit(empty_crop_plot, rect.topleft)
 
-	# Check if the seed has been planted and update to fully grown after X seconds
+					# Check if the seed has been planted and update to fully grown after X seconds
 					if state == 2 and time.time() - planting_time > grow_time:
 						self.game_data['grid_state'][str((row, col))] = (3, planting_time)  # Mark as fully grown
-	# event handler
+			# event handler
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
 					self.save()
 					return
 
 				#if event.type == pygame.VIDEORESIZE:
-					#  width, height = event.w, event.h
+				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					mousex, mousey = pygame.mouse.get_pos()
-					for x in range(len(Blanks)):
-						if Blanks[x].rect.colliderect(mouse_rect):
+					for x in range(len(self.Blanks)):
+						if self.Blanks[x].rect.colliderect(mouse_rect):
 							self.game_data['dnum'] = x
 							break
 
@@ -192,55 +183,44 @@ class Game:
 
 					if self.game_data['placing_crop']:
 						# Place empty crop plot if the square is empty
-						if self.game_data['grid_state'][str((row, col))][0] == 0 or 4: #DO NOT REMOVE OR 4 STATEMNT CODE WILL STOP WORKING IDK WHY
-							if self.game_data['grid_state'][str((row, col))][0] == 0 and wielded == 'hoe' and self.game_data['hoe_durability'] > 0:
-								self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
-								self.game_data['hoe_durability'] -= 1
-							elif self.game_data['grid_state'][str((row, col))][0] == 1 and wielded == 'carrotseed' and self.game_data['carrotseed'] > 0:
-								self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-								self.game_data['carrotseed'] -= 1
-							elif self.game_data['grid_state'][str((row, col))][0] == 3 and wielded == 'gardenglove':
-								self.game_data['grid_state'][str((row, col))] = (1, 0)
-								self.game_data['carrots'] += 1
-							#elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
-							#    bonemeal = True
-	# Plant a new seed if the square has an empty crop plot
+						if self.game_data['grid_state'][str((row, col))][0] == 0 and wielded['item'] == 'hoe' and self.game_data['hoe_durability'] > 0:
+							self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
+							self.game_data['hoe_durability'] -= 1
+						elif self.game_data['grid_state'][str((row, col))][0] == 1 and wielded['item'] == 'carrotseed' and self.game_data['carrotseed'] > 0:
+							self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
+							self.game_data['carrotseed'] -= 1
+						elif self.game_data['grid_state'][str((row, col))][0] == 3 and wielded['item'] == 'gardenglove':
+							self.game_data['grid_state'][str((row, col))] = (1, 0)
+							self.game_data['carrots'] += 1
+						#elif self.game_data['grid_state'][str((row, col))][0] == 2 and wielded == 'bonemeal': #and bonemeal.value > 0:
+						#    bonemeal = True
+					# Plant a new seed if the square has an empty crop plot
 					else:
 						if self.game_data['grid_state'][str((row, col))][0] == 1:
 							self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
 
-	# displays everything that need to be on top
+			# displays everything that need to be on top
 			all_sprites.draw(screen)
-			if wielded == 'carrot':
-				screen.blit(carrotitem.image, carrotitem.rect)
-			if wielded == 'carrotseed':
-				screen.blit(carrotseeds.image, carrotseeds.rect)
-			if wielded == 'hoe':
-				screen.blit(gardenhoe.image, gardenhoe.rect)
-			if wielded == 'gardenglove':
-				screen.blit(gardenglove.image, gardenglove.rect)
-			if wielded == 'coin':
-				screen.blit(coin.image, coin.rect)
+			screen.blit(wielded['sprite'].image, wielded['sprite'].rect)
 
-	# displaying everything else
+			# displaying everything else
 			screen.blit(hotbarUI.image, hotbarUI.rect)
 
-			for x in range(len(Blanks)):
-				screen.blit(Blanks[x].image, Blanks[x].rect)
+			for x in range(len(self.Blanks)):
+				screen.blit(self.Blanks[x].image, self.Blanks[x].rect)
 
 			screen.blit(highlight.image, highlight.rect)
 
-			if openinv == True:
-				screen.blit(inventory.image, inventory.rect)
 
 			if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
-				if openinv == False:
-					openinv = True
-				elif openinv == True:
-					openinv = False
-				self.game_data['move_ticker'] = 20
+				openinv = not openinv
+				self.game_data['move_ticker'] = key_cooldown
 
-	# display the number of items a player has
+			if openinv:
+				screen.blit(inventory.image, inventory.rect)
+
+
+			# display the number of items a player has
 			color1 = BLACK
 			color2 = BLACK
 			color3 = BLACK
@@ -266,47 +246,57 @@ class Game:
 			screen.blit(coin_text, (width / 2 - 86 + (34 * 5) - 25, height - ((hotbarUI.rect.height/2) - 7)))
 			
 			
-	#esc for controls prompt
+			#esc for controls prompt
 			controls_text = font.render("*CAUTION* Game Under Construction *CAUTION* ", True, YELLOW)
 			screen.blit(controls_text, (10, 10))
 
-	#update display
+			# Update display
 			pygame.display.flip()
 
-	#current buy and sell controls
-			if keys[pygame.K_6]:
-				self.game_data['coinage'] += self.game_data['carrots']*2
-				self.game_data['carrots'] = 0
-
-			elif keys[pygame.K_7] and self.game_data['coinage'] >= 10 and self.game_data['move_ticker'] == 0: #this will always do 2x idk why just leave it
-				self.game_data['coinage'] -= 10
-				self.game_data['carrotseed'] += 10
-				self.game_data['move_ticker'] = 20
-
-			elif keys[pygame.K_8] and self.game_data['hoe_durability'] < 6 and self.game_data['move_ticker'] == 0 and self.game_data['carrots']*2 + self.game_data['coinage'] + self.game_data['carrotseed'] * 2 >= 30:
-				self.game_data['hoe_durability'] = 6
-				self.game_data['coinage'] -= 20
-				self.game_data['move_ticker'] = 20
-
-			elif keys[pygame.K_m] and self.game_data['move_ticker'] == 0:
-				mixer.music.set_volume(int(self.game_data['mute']))
-				self.game_data['mute'] = not self.game_data['mute']
-				self.game_data['move_ticker'] = 20
 
 
-	# Move the player 
+
+
+			# Post display operations
+
+			#current buy and sell controls
+			if self.game_data['move_ticker'] == 0:
+				if keys[pygame.K_6]:
+					self.game_data['coinage'] += self.game_data['carrots']*2
+					self.game_data['carrots'] = 0
+					self.game_data['move_ticker'] = key_cooldown
+
+				elif keys[pygame.K_7] and self.game_data['coinage'] >= 10:
+					self.game_data['coinage'] -= 10
+					self.game_data['carrotseed'] += 10
+					self.game_data['move_ticker'] = key_cooldown
+
+				elif keys[pygame.K_8] and self.game_data['coinage'] >= 30:
+					self.game_data['hoe_durability'] += 6
+					self.game_data['coinage'] -= 20
+					self.game_data['move_ticker'] = key_cooldown
+
+				elif keys[pygame.K_m]:
+					mixer.music.set_volume(int(self.game_data['mute']))
+					self.game_data['mute'] = not self.game_data['mute']
+					self.game_data['move_ticker'] = key_cooldown
+
 				
 			# Move the player
+
 			if keys[pygame.K_w]:
 				sprite1.rect.y -= playerspeed
-			if keys[pygame.K_s]:
+			elif keys[pygame.K_s]:
 				sprite1.rect.y += playerspeed
+			# Cap the player's position
+			sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
+
 			if keys[pygame.K_a]:
 				sprite1.rect.x -= playerspeed
-			if keys[pygame.K_d]:
+			elif keys[pygame.K_d]:
 				sprite1.rect.x += playerspeed
 			# Cap the player's position
 			sprite1.rect.x = max(0, min(sprite1.rect.x, width - sprite1.rect.width))
-			sprite1.rect.y = max(0, min(sprite1.rect.y, height - sprite1.rect.height))
-	# Cap the frame rate
+
 			clock.tick(60)
+d
