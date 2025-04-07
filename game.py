@@ -47,6 +47,7 @@ class Game:
 	def _save(self):
 		# Save data only used at start/save times
 		self.game_data['player_pos'] = player.rect.center
+		self.game_data['inventory'] = self.inventory.get_metadata()
 
 		with open("saveddata" + ".json", "w") as file:
 			json.dump(self.game_data, file)
@@ -56,15 +57,20 @@ class Game:
 		pygame.display.set_caption("Carrot Game")
 
 		self.game_data['mute'] = False
-		self.game_data['carrotseed'] = 15
-		self.game_data['carrots'] = 0
-		self.game_data['hoe_durability'] = 6
-		self.game_data['coinage'] = 0
 		self.game_data['placing_crop'] = True
 		self.game_data['move_ticker'] = 0
 		self.game_data['dnum'] = 0
 		self.game_data['grid_size'] = 50
 		self.game_data['openinv'] = False
+
+		self.inventory = Inventory()
+		self.inventory.set_item(0, Itemstack({'item' : "carrotseed", 'count' : 15}))
+		self.inventory.set_item(1, Itemstack({'item' : "carrot", 'count' : 0}))
+		self.inventory.set_item(2, Itemstack({'item' : "hoe", 'count' : 6}))
+		self.inventory.set_item(3, Itemstack({'item' : "gardenglove", 'count' : 0}))
+		self.inventory.set_item(4, Itemstack({'item' : "coin", 'count' : 0}))
+		self.game_data['inventory'] = self.inventory.get_metadata()
+
 
 		self.rows, self.cols = width // self.game_data['grid_size'], width // self.game_data['grid_size']
 		self.grid = [[0] * self.cols for _ in range(self.rows)]
@@ -85,17 +91,12 @@ class Game:
 			self._load()
 
 
+		self.inventory = Inventory(self.game_data['inventory'])
+
+
 		global player
 		player = simplesprite('bunny1.png', self.game_data['player_pos'])
 
-		self.inventory = Inventory()
-
-		# Test
-		self.inventory.add_item(Itemstack("carrotseed", 15))
-		self.inventory.add_item(Itemstack("carrot", 0))
-		self.inventory.add_item(Itemstack("hoe", 6))
-		self.inventory.add_item(Itemstack("gardenglove", 0))
-		self.inventory.add_item(Itemstack("coin", 0))
 
 
 		# ambiance
@@ -139,8 +140,10 @@ class Game:
 				self.game_data['dnum'] = 4
 
 			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
-			wielded = itemdict[self.inventory.value[self.game_data['dnum']].item]
-			wielded['sprite'].rect.center = (player.rect.x + 10, player.rect.y + 35)
+			wielded = Empty()
+			wielded.item = self.inventory.value[self.game_data['dnum']]
+			wielded.sprite = itemdict[wielded.item.value['item']]['sprite']
+			wielded.sprite.rect.center = (player.rect.x + 10, player.rect.y + 35)
 
 
 
@@ -185,17 +188,17 @@ class Game:
 						# Place empty crop plot if the square is empty
 						match self.game_data['grid_state'][str((row, col))][0]:
 							case 0:
-								if  wielded['item'] == 'hoe' and self.game_data['hoe_durability'] > 0:
+								if  wielded.item.value['item'] == 'hoe' and wielded.item.get_count() > 0:
 									self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
-									self.game_data['hoe_durability'] -= 1
+									self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : -1}))
 							case 1:
-								if wielded['item'] == 'carrotseed' and self.game_data['carrotseed'] > 0:
+								if wielded.item.value['item'] == 'carrotseed' and wielded.item.get_count() > 0:
 									self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-									self.game_data['carrotseed'] -= 1
+									self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : -1}))
 							case 3:
-								if wielded['item'] == 'gardenglove':
+								if wielded.item.value['item'] == 'gardenglove':
 									self.game_data['grid_state'][str((row, col))] = (1, 0)
-									self.game_data['carrots'] += 1
+									self.inventory.add_item(Itemstack({'item' : 'carrot', 'count' : 1}))
 
 					# Plant a new seed if the square has an empty crop plot
 					else:
@@ -205,7 +208,7 @@ class Game:
 
 			# displays everything that need to be on top
 			screen.blit(player.image, player.rect)
-			screen.blit(wielded['sprite'].image, wielded['sprite'].rect)
+			screen.blit(wielded.sprite.image, wielded.sprite.rect)
 
 
 			# displaying everything else
@@ -221,10 +224,10 @@ class Game:
 			x = width / 2 - 102
 			y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(0, 5):
-				if self.inventory.value[i].item != "":
-					screen.blit(itemdict[self.inventory.value[i].item]['sprite'].image, (x + (i * 34), y))
+				if self.inventory.value[i].value['item'] != "":
+					screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, (x + (i * 34), y))
 
-					carrots_text = font.render(f"{self.inventory.value[i].count}", True, LBLUE)
+					carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, LBLUE)
 					screen.blit(carrots_text, (x + (i * 34), y + 30))
 
 			screen.blit(highlight.image, highlight.rect)
@@ -241,10 +244,10 @@ class Game:
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
 				for i in range(0, 24):
-					if self.inventory.value[i].item != "":
-						screen.blit(itemdict[self.inventory.value[i].item]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
+					if self.inventory.value[i].value['item'] != "":
+						screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
 
-						carrots_text = font.render(f"{self.inventory.value[i].count}", True, BLACK)
+						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
 						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
 
 			
@@ -265,18 +268,18 @@ class Game:
 			#current buy and sell controls
 			if self.game_data['move_ticker'] == 0:
 				if keys[pygame.K_6]:
-					self.game_data['coinage'] += self.game_data['carrots']*2
-					self.game_data['carrots'] = 0
+					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : self.inventory.get_item('carrot').get_count() * 2}))
+					self.inventory.get_item('carrot').set_count(0)
 					self.game_data['move_ticker'] = key_cooldown
 
-				elif keys[pygame.K_7] and self.game_data['coinage'] >= 10:
-					self.game_data['coinage'] -= 10
-					self.game_data['carrotseed'] += 10
+				elif keys[pygame.K_7] and self.inventory.get_item('coin').get_count() >= 10:
+					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -10}))
+					self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : 10}))
 					self.game_data['move_ticker'] = key_cooldown
 
-				elif keys[pygame.K_8] and self.game_data['coinage'] >= 20 and self.game_data['carrotseed']*2 + self.game_data['carrots']*2 + self.game_data['coinage'] >= 30:
-					self.game_data['hoe_durability'] += 6
-					self.game_data['coinage'] -= 20
+				elif keys[pygame.K_8] and self.inventory.get_item('coin').get_count() >= 20 and self.inventory.get_item('carrotseed').get_count()*2 + self.inventory.get_item('carrot').get_count()*2 + self.inventory.get_item('coin').get_count() >= 30:
+					self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : 6}))
+					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -20}))
 					self.game_data['move_ticker'] = key_cooldown
 
 				elif keys[pygame.K_m]:

@@ -10,31 +10,50 @@ class simplesprite(pygame.sprite.Sprite):
 		self.rect.center = pos
 
 
+class Empty:
+	def __init__(self):
+		return
 
 
 class Itemstack:
-	def __init__(self, item, count):
-		self.item = item
-		self.count = count
+	def __init__(self, itemstack = {'item' : "", 'count' : 0}):
+		item, count = itemstack
+
+		self.value = itemstack
 
 	def same_as(self, itemstack):
-		if self.item == itemstack.item:
+		if self.value['item'] == itemstack.value['item']:
 			return True
 		else:
 			return False
 
 	def combine(self, itemstack):
-		self.count += itemstack.count
+		self.value['count'] += itemstack.value['count']
 		return self
 
-No_Item = Itemstack("", 0)
+	def get_count(self):
+		return self.value['count']
+
+	def set_count(self, n):
+		self.value['count'] = n
+
+	def get_metadata(self):
+		return self.value
+
+No_Item = Itemstack()
 
 
 class Inventory:
-	value = []
-	def __init__(self):
-		for i in range(0, 24):
-			self.value.insert(i, Itemstack("", 0))
+	def __init__(self, value = None):
+		self.value = []
+
+		if value != None:
+			for i in range(0, 24):
+				self.value.insert(i, Itemstack(value[i]))
+		else:
+			for i in range(0, 24):
+				self.value.insert(i, No_Item)
+
 
 	def add_item(self, itemstack):
 		for i in range(0, 24):
@@ -48,8 +67,20 @@ class Inventory:
 
 		return False
 
+	def set_item(self, i, itemstack):
+		self.value[i] = itemstack
+
+	def get_item(self, item):
+		for i in range(0, 24):
+			if self.value[i].value['item'] == item:
+				return self.value[i]
+
 	def get_metadata(self):
-		return self.value
+		meta = []
+		for i in range(0, 24):
+			meta.insert(i, self.value[i].get_metadata())
+
+		return meta
 
 
 
