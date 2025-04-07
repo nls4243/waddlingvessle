@@ -9,7 +9,7 @@ import json
 # load sprite assets
 background = simplesprite('background.png', (width / 2, height / 2))
 highlight = simplesprite('highlight.png', ((width / 2), height - 1000))
-hotbarUI = simplesprite('carrothotbarUI.png', (width / 2, height - 30))
+hotbarUI = simplesprite('CarrotHotBar2.png', (width / 2, height - 30))
 inventory = simplesprite('carrotinvUI.png', (width / 2, height / 2))
 
 player = None
@@ -211,13 +211,28 @@ class Game:
 			screen.blit(player.image, player.rect)
 			screen.blit(wielded['sprite'].image, wielded['sprite'].rect)
 
+
 			# displaying everything else
-			screen.blit(hotbarUI.image, hotbarUI.rect)
 
 			for x in range(len(self.Blanks)):
 				screen.blit(self.Blanks[x].image, self.Blanks[x].rect)
 
+
+			# HotBar
+
+			screen.blit(hotbarUI.image, hotbarUI.rect)
+
+			x = width / 2 - 102
+			y = height - (hotbarUI.rect.height/2) - 15
+			for i in range(0, 5):
+				if self.inventory.value[i].item != "":
+					screen.blit(itemdict_r[self.inventory.value[i].item]['sprite'].image, (x + (i * 34), y))
+
+					carrots_text = font.render(f"{self.inventory.value[i].count}", True, LBLUE)
+					screen.blit(carrots_text, (x + (i * 34), y + 30))
+
 			screen.blit(highlight.image, highlight.rect)
+
 
 
 			if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
@@ -236,17 +251,6 @@ class Game:
 						carrots_text = font.render(f"{self.inventory.value[i].count}", True, BLACK)
 						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
 
-
-
-			carrotseed_text = font.render(f"{self.game_data['carrotseed']}", True, BLACK)
-			screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1) - 30, height - ((hotbarUI.rect.height/2) - 7)))
-			carrots_text = font.render(f"{self.game_data['carrots']}", True, BLACK)
-			screen.blit(carrots_text, (width / 2 - 86 + (34 * 2) - 25, height - ((hotbarUI.rect.height/2)-7 )))
-
-			hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, BLACK)
-			screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3) - 25, height - ((hotbarUI.rect.height/2) - 7)))
-			coin_text = font.render(f"{self.game_data['coinage']}", True, BLACK)            
-			screen.blit(coin_text, (width / 2 - 86 + (34 * 5) - 25, height - ((hotbarUI.rect.height/2) - 7)))
 			
 			
 			#esc for controls prompt
