@@ -95,8 +95,11 @@ class Game:
 		self.inventory = Inventory()
 
 		# Test
-		self.inventory.add_item(Itemstack("coin", 1))
-		self.inventory.add_item(Itemstack("carrot", 1))
+		self.inventory.add_item(Itemstack("carrotseed", 15))
+		self.inventory.add_item(Itemstack("carrot", 0))
+		self.inventory.add_item(Itemstack("hoe", 6))
+		self.inventory.add_item(Itemstack("gardenglove", 0))
+		self.inventory.add_item(Itemstack("coin", 0))
 
 
 		# ambiance
