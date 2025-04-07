@@ -24,13 +24,18 @@ carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
 gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
-itemdict = [
-	{'item' : 'carrotseed', 'sprite' : carrotseeds},
-	{'item' : 'carrot', 'sprite' : carrotitem},
-	{'item' : 'hoe', 'sprite' : gardenhoe},
-	{'item' : 'gardenglove', 'sprite' : gardenglove},
-	{'item' : 'coin', 'sprite' : coin}
-]
+
+itemdict_r = {
+	'carrotseed' : {'item' : 'carrotseed', 'sprite' : carrotseeds},
+	'carrot' : {'item' : 'carrot', 'sprite' : carrotitem},
+	'hoe' : {'item' : 'hoe', 'sprite' : gardenhoe},
+	'gardenglove' : {'item' : 'gardenglove', 'sprite' : gardenglove},
+	'coin' : {'item' : 'coin', 'sprite' : coin}
+}
+
+itemdict = []
+for _, v in itemdict_r.items():
+	itemdict.insert(len(itemdict), v)
 
 
 class Game:
@@ -86,6 +91,12 @@ class Game:
 
 		global player
 		player = simplesprite('bunny1.png', self.game_data['player_pos'])
+
+		self.inventory = Inventory()
+
+		# Test
+		self.inventory.add_item(Itemstack("coin", 1))
+		self.inventory.add_item(Itemstack("carrot", 1))
 
 
 		# ambiance
@@ -212,6 +223,12 @@ class Game:
 
 			if self.game_data['openinv']:
 				screen.blit(inventory.image, inventory.rect)
+
+				x = inventory.rect.x + 35
+				y = inventory.rect.y + 33
+				for i in range(0, 24):
+					if self.inventory.value[i].item != "":
+						screen.blit(itemdict_r[self.inventory.value[i].item]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
 
 
 			# display the number of items a player has

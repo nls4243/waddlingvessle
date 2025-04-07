@@ -18,7 +18,7 @@ class Itemstack:
 		self.count = count
 
 	def same_as(self, itemstack):
-		if self.item == itemstack.type:
+		if self.item == itemstack.item:
 			return True
 		else:
 			return False
@@ -32,12 +32,12 @@ No_Item = Itemstack("", 0)
 
 class Inventory:
 	value = []
-	def __init__(self, element_count):
-		for i in range(0, element_count-1):
-			self.value(i, Itemstack("", 0))
+	def __init__(self):
+		for i in range(0, 24):
+			self.value.insert(i, Itemstack("", 0))
 
 	def add_item(self, itemstack):
-		for i in range(0, element_count-1):
+		for i in range(0, 24):
 			if self.value[i].same_as(itemstack):
 				self.value[i].combine(itemstack)
 				return True
