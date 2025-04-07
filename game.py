@@ -36,18 +36,20 @@ itemdict = [
 class Game:
 	game_data = {}
 
-	def load(self):
+	def _load(self):
 		data_in = {}
 		with open("saveddata.json", "r") as file:
 			data_in = json.load(file)
 		for key, value in data_in.items():
 			self.game_data[key] = value
 	
-	def save(self):
+	def _save(self):
 		with open("saveddata" + ".json", "w") as file:
 			json.dump(self.game_data, file)
 
-	def __init__(self):
+	def __init__(self, load = False):
+		# initial setup
+
 		self.game_data['mute'] = False
 		self.game_data['carrotseed'] = 15
 		self.game_data['carrots'] = 0
@@ -65,24 +67,33 @@ class Game:
 
 		pygame.display.set_caption("Carrot Game")
 
-
-
 		self.Blanks = {}
 		for x in range(0, 1):
 			self.Blanks[x] = simplesprite('blank.png')
 			self.Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
 
 
+		# Load
+		if load:
+			self._load()
 
-	def start(self):
-		# start volume
+
+		# ambiance
 		mixer.music.set_volume(int(not self.game_data['mute']))
+
+		# Start
+		self._start()
+
+
+
+	def _start(self):
+		# start volume
 
 		openinv = False
 
 		# Set up display
 		mousex, mousey = pygame.mouse.get_pos()
-		mouse_rect = pygame.Rect(mousex, mousey,1,1)
+		mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
 
 
 
@@ -150,7 +161,7 @@ class Game:
 			# event handler
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
-					self.save()
+					self._save()
 					return
 
 				#if event.type == pygame.VIDEORESIZE:

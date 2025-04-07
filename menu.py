@@ -34,12 +34,9 @@ while menu_loop:
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			if new_button.rect.colliderect(mouse_rect):
 				game = Game()
-				game.start()
 
 			elif load_button.rect.colliderect(mouse_rect):
-				game = Game()
-				game.load()
-				game.start()
+				game = Game(load = True)
 
 			elif exit_button.rect.colliderect(mouse_rect):
 				end()
