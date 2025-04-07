@@ -177,15 +177,13 @@ class Game:
 				#if event.type == pygame.VIDEORESIZE:
 				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					mouse_button_state = True
+					mouse_button_state = not mouse_button_state
 
 					mousex, mousey = pygame.mouse.get_pos()
 					for x in range(len(self.Blanks)):
 						if self.Blanks[x].rect.colliderect(mouse_rect):
 							self.game_data['dnum'] = x
 							break
-				else:
-					mouse_button_state = False
 
 
 				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
