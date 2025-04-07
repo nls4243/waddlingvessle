@@ -48,6 +48,7 @@ load_button.rect.center = ((window_width / 2)+16, (window_height / 2) - 52)
 
 
 key_cooldown = 10
+font = pygame.font.Font(None, 18)
 
 
 # To be moved

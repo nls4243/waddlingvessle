@@ -228,35 +228,24 @@ class Game:
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
-				y = inventory.rect.y + 33
+				y = inventory.rect.y + 30
 				for i in range(0, 24):
 					if self.inventory.value[i].item != "":
 						screen.blit(itemdict_r[self.inventory.value[i].item]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
 
+						carrots_text = font.render(f"{self.inventory.value[i].count}", True, BLACK)
+						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
 
-			# display the number of items a player has
-			color1 = BLACK
-			color2 = BLACK
-			color3 = BLACK
-			color4 = BLACK
-			if self.game_data['carrots'] >= 100:
-				color1 = LBLUE
-			if self.game_data['carrotseed'] >= 100:
-				color2 = LBLUE
-			if self.game_data['hoe_durability'] >= 100:
-				color3 = LBLUE
-			if self.game_data['coinage'] >= 100:
-				color4 = LBLUE
 
-			font = pygame.font.Font(None, 18)
-			carrotseed_text = font.render(f"{self.game_data['carrotseed']}", True, color2)
+
+			carrotseed_text = font.render(f"{self.game_data['carrotseed']}", True, BLACK)
 			screen.blit(carrotseed_text, (width / 2 - 86 + (34 * 1) - 30, height - ((hotbarUI.rect.height/2) - 7)))
-			carrots_text = font.render(f"{self.game_data['carrots']}", True, color1)
+			carrots_text = font.render(f"{self.game_data['carrots']}", True, BLACK)
 			screen.blit(carrots_text, (width / 2 - 86 + (34 * 2) - 25, height - ((hotbarUI.rect.height/2)-7 )))
 
-			hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, color3)
+			hoelife_text = font.render(f"{self.game_data['hoe_durability']}", True, BLACK)
 			screen.blit(hoelife_text, (width / 2 - 86 + (34 * 3) - 25, height - ((hotbarUI.rect.height/2) - 7)))
-			coin_text = font.render(f"{self.game_data['coinage']}", True, color4)            
+			coin_text = font.render(f"{self.game_data['coinage']}", True, BLACK)            
 			screen.blit(coin_text, (width / 2 - 86 + (34 * 5) - 25, height - ((hotbarUI.rect.height/2) - 7)))
 			
 			
@@ -295,7 +284,7 @@ class Game:
 					self.game_data['mute'] = not self.game_data['mute']
 					self.game_data['move_ticker'] = key_cooldown
 
-				
+
 			# Move the player
 
 			if keys[pygame.K_w]:
