@@ -167,10 +167,9 @@ class Game:
 							break
 
 				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
-					playerx = player.rect.x + 32
-					playery = player.rect.y + 32
-					col = playerx // self.game_data['grid_size']
-					row = playery // self.game_data['grid_size']
+					col, row = player.rect.center
+					col //= self.game_data['grid_size']
+					row //= self.game_data['grid_size']
 
 					if self.game_data['placing_crop']:
 						# Place empty crop plot if the square is empty
