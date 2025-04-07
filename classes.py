@@ -23,5 +23,6 @@ class simplesprite(pygame.sprite.Sprite):
 
 class Inventory:
 	value = []
-	def _init__(self):
-		print("")
+	def _init__(self, element_count):
+		for i in range(0, element_count-1):
+			self.value.(i, {'count' : 0, 'item' : })
