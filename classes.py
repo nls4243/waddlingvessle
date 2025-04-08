@@ -73,7 +73,7 @@ class Inventory:
 				free = i
 
 		if free != -1:
-			self.value[i] = itemstack
+			self.value[free] = itemstack
 			return True
 
 		return False

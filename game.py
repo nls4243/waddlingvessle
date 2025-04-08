@@ -89,7 +89,8 @@ items = {
 	},
 	'gardenglove' : {
 		'sprite' : gardenglove,
-		'pulls_fruit' : True
+		'pulls_fruit' : True,
+		'give_player' : True
 	},
 	'coin' : {
 		'sprite' : coin,
@@ -99,15 +100,6 @@ items = {
 		'sprite' : soil,
 	}
 }
-
-items_started_with = [
-	'carrot',
-	'carrotseed',
-	'hoe',
-	'gardenglove',
-	'radish_seeds',
-	'coin'
-]
 
 
 
@@ -141,13 +133,13 @@ class Game:
 		self.game_data['openinv'] = False
 
 		self.inventory = Inventory()
-		i = 0
-		for key in items_started_with:
-			c = 0
-			if 'countable' in items[key]:
-				c = items[key]['countable']
-			self.inventory.set_item(i, Itemstack({'item' : key, 'count' : c}))
-			i += 1
+		for key, idef in items.items():
+			if 'countable' in idef:
+				c = idef['countable']
+				self.inventory.add_item(Itemstack({'item' : key, 'count' : c}))
+			elif 'give_player' in idef:
+				self.inventory.add_item(Itemstack({'item' : key, 'count' : 0}))
+			
 
 		self.game_data['inventory'] = self.inventory.get_metadata()
 
