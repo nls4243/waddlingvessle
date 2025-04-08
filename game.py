@@ -26,7 +26,7 @@ soil = simplesprite('emptycropplot.png')
 
 carrot_seed_plot = simplesprite('carrotseedplot.png')
 fully_grown_carrot = simplesprite('fullygrowncarrot.png')
-carrotitem = simplesprite('justcarrot.png')
+carrot = simplesprite('carrot.png')
 carrotseeds = simplesprite('carrotseedpack.png')
 
 radish = simplesprite('radish.png')
@@ -47,12 +47,14 @@ items = {
 	},
 
 	'radish' : {
-		'sprite' : radish
+		'sprite' : radish,
+		'countable' : 0
 	},
 	'radish_seeds' : {
 		'sprite' : radish_seeds,
 		'countable' : 15,
-		'use_on_soil' : ('radish_ungrown_plot', 3)
+		'use_on_soil' : ('radish_ungrown_plot', 3),
+		'give_player' : True
 	},
 	'radish_ungrown_plot' : {
 		'sprite' : radish_ungrown_plot,
@@ -64,12 +66,14 @@ items = {
 	},
 
 	'carrot' : {
-		'sprite' : carrotitem
+		'sprite' : carrot,
+		'countable' : 0
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
 		'countable' : 15,
-		'use_on_soil' : ('carrot_seed_plot', 3)
+		'use_on_soil' : ('carrot_seed_plot', 5),
+		'give_player' : True
 	},
 	'carrot_seed_plot' : {
 		'sprite' : carrot_seed_plot,
@@ -84,6 +88,7 @@ items = {
 		'sprite' : gardenhoe,
 		'countable' : 6,
 		'use_on_' : ('soil', 0),
+		'give_player' : True
 	},
 	'gardenglove' : {
 		'sprite' : gardenglove,
@@ -132,11 +137,12 @@ class Game:
 
 		self.inventory = Inventory()
 		for key, idef in items.items():
-			if 'countable' in idef:
-				c = idef['countable']
-				self.inventory.add_item(Itemstack({'item' : key, 'count' : c}))
-			elif 'give_player' in idef:
-				self.inventory.add_item(Itemstack({'item' : key, 'count' : 0}))
+			if 'give_player' in idef:
+				if 'countable' in idef:
+					c = idef['countable']
+					self.inventory.add_item(Itemstack({'item' : key, 'count' : c}))
+				else:
+					self.inventory.add_item(Itemstack({'item' : key, 'count' : 0}))
 			
 
 		self.game_data['inventory'] = self.inventory.get_metadata()
