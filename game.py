@@ -197,7 +197,9 @@ class Game:
 				#if event.type == pygame.VIDEORESIZE:
 				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					pick_up_item = True
+					if self.game_data['move_ticker'] == 0:
+						pick_up_item = True
+						self.game_data['move_ticker'] = key_cooldown
 
 					mousex, mousey = pygame.mouse.get_pos()
 					for x in range(len(self.Blanks)):
@@ -252,13 +254,12 @@ class Game:
 			y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(5):
 				item = self.inventory.value[i]
-				if item.value['item'] != "":
-					item_def = items[item.value['item']]
-					screen.blit(item_def['sprite'].image, (x + (i * 34), y))
+				item_def = items[item.value['item']]
+				screen.blit(item_def['sprite'].image, (x + (i * 34), y))
 
-					if 'countable' in item_def:
-						carrots_text = font.render(f"{item.get_count()}", True, LBLUE)
-						screen.blit(carrots_text, (x + (i * 34), y + 30))
+				if 'countable' in item_def:
+					carrots_text = font.render(f"{item.get_count()}", True, LBLUE)
+					screen.blit(carrots_text, (x + (i * 34), y + 30))
 
 			screen.blit(highlight.image, highlight.rect)
 
@@ -291,6 +292,9 @@ class Game:
 							itemstack = self.inventory.get_item(i)
 							self.inventory.set_item(i, self.inventory.get_item(moving_item))
 							self.inventory.set_item(moving_item, itemstack)
+							moving_item = -1
+
+						pick_up_item = False
 
 					# dont render extra stuff
 					if moving_item == i:
@@ -311,8 +315,6 @@ class Game:
 
 			else:
 				moving_item = -1
-
-			pick_up_item = False
 				
 
 			
