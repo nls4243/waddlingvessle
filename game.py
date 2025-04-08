@@ -251,11 +251,14 @@ class Game:
 			x = width / 2 - 102
 			y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(0, 5):
-				if self.inventory.value[i].value['item'] != "":
-					screen.blit(items[self.inventory.value[i].value['item']]['sprite'].image, (x + (i * 34), y))
+				item = self.inventory.value[i]
+				if item.value['item'] != "":
+					item_def = items[item.value['item']]
+					screen.blit(item_def['sprite'].image, (x + (i * 34), y))
 
-					carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, LBLUE)
-					screen.blit(carrots_text, (x + (i * 34), y + 30))
+					if 'countable' in item_def:
+						carrots_text = font.render(f"{item.get_count()}", True, LBLUE)
+						screen.blit(carrots_text, (x + (i * 34), y + 30))
 
 			screen.blit(highlight.image, highlight.rect)
 
@@ -273,10 +276,13 @@ class Game:
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
 				for i in range(0, 24):
-					items[self.inventory.value[i].value['item']]['sprite'].rect.x = x + (i % 5 * 50)
-					items[self.inventory.value[i].value['item']]['sprite'].rect.y = y + (i // 5 * 50)
+					itemstack = self.inventory.value[i]
+					item_def = items[itemstack.value['item']]
 
-					if pick_up_item and items[self.inventory.value[i].value['item']]['sprite'].rect.colliderect(mouse_rect):
+					item_def['sprite'].rect.x = x + (i % 5 * 50)
+					item_def['sprite'].rect.y = y + (i // 5 * 50)
+
+					if pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
 						if moving_item == -1:
 							moving_item = i
 						elif moving_item == i:
@@ -290,11 +296,11 @@ class Game:
 					if moving_item == i:
 						continue
 
-					if self.inventory.value[i].value['item'] != "":
-						screen.blit(items[self.inventory.value[i].value['item']]['sprite'].image, items[self.inventory.value[i].value['item']]['sprite'].rect)
+					if itemstack.value['item'] != "":
+						screen.blit(item_def['sprite'].image, item_def['sprite'].rect)
 
-						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
-						screen.blit(carrots_text, (items[self.inventory.value[i].value['item']]['sprite'].rect.x, items[self.inventory.value[i].value['item']]['sprite'].rect.y + 30))
+						carrots_text = font.render(f"{itemstack.value['count']}", True, BLACK)
+						screen.blit(carrots_text, (item_def['sprite'].rect.x, item_def['sprite'].rect.y + 30))
 
 				if moving_item != -1:
 					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
