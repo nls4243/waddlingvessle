@@ -441,3 +441,5 @@ class Game:
 			player.rect.x = max(0, min(player.rect.x, width - player.rect.width))
 
 			self.clock.tick(60)
+
+			self.inventory.clean()

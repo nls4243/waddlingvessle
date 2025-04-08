@@ -16,7 +16,7 @@ class Empty:
 
 
 class Itemstack:
-	def __init__(self, itemstack = {'item' : "", 'count' : 0}):
+	def __init__(self, itemstack = {'item' : "", 'count' : -1}):
 		item, count = itemstack
 
 		self.value = itemstack
@@ -60,6 +60,10 @@ class Inventory:
 			for i in range(25):
 				self.value.insert(i, No_Item)
 
+	def clean(self):
+		for i in range(len(self.value)):
+			if self.value[i].value['count'] == 0:
+				self.value[i] = No_Item
 
 	# Broken
 	def add_item(self, itemstack):
