@@ -48,16 +48,16 @@ class Inventory:
 		self.value = []
 
 		if value != None:
-			for i in range(0, 24):
+			for i in range(25):
 				self.value.insert(i, Itemstack(value[i]))
 		else:
-			for i in range(0, 24):
+			for i in range(25):
 				self.value.insert(i, No_Item)
 
 
 	def add_item(self, itemstack):
 		free = -1
-		for i in range(0, 24):
+		for i in range(len(self.value)):
 			if self.value[i].same_as(itemstack):
 				self.value[i].combine(itemstack)
 				return True
@@ -78,13 +78,13 @@ class Inventory:
 		return self.value[i]
 
 	def get_item_by_name(self, item):
-		for i in range(0, 24):
+		for i in range(len(self.value)):
 			if self.value[i].value['item'] == item:
 				return self.value[i]
 
 	def get_metadata(self):
 		meta = []
-		for i in range(0, 24):
+		for i in range(len(self.value)):
 			meta.insert(i, self.value[i].get_metadata())
 
 		return meta

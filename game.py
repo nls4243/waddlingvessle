@@ -250,7 +250,7 @@ class Game:
 
 			x = width / 2 - 102
 			y = height - (hotbarUI.rect.height/2) - 15
-			for i in range(0, 5):
+			for i in range(5):
 				item = self.inventory.value[i]
 				if item.value['item'] != "":
 					item_def = items[item.value['item']]
@@ -275,7 +275,7 @@ class Game:
 
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
-				for i in range(0, 24):
+				for i in range(len(self.inventory.value)):
 					itemstack = self.inventory.value[i]
 					item_def = items[itemstack.value['item']]
 
