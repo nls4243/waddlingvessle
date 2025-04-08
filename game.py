@@ -112,8 +112,8 @@ class Game:
 	def _start(self):
 		clock = pygame.time.Clock()
 
-		moving_item = False
-		mouse_button_state = False
+		moving_item = -1
+		pick_up_item = False
 		while True:
 			#variables that need to be in the loop
 			keys = pygame.key.get_pressed()
@@ -177,7 +177,7 @@ class Game:
 				#if event.type == pygame.VIDEORESIZE:
 				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					mouse_button_state = not mouse_button_state
+					pick_up_item = True
 
 					mousex, mousey = pygame.mouse.get_pos()
 					for x in range(len(self.Blanks)):
@@ -248,30 +248,44 @@ class Game:
 				self.game_data['move_ticker'] = key_cooldown
 
 			if self.game_data['openinv']:
-				if mouse_button_state:
-					moving_item = True
-				else:
-					moving_item = False
-
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
 				for i in range(0, 24):
+					itemdict[self.inventory.value[i].value['item']]['sprite'].rect.x = x + (i % 5 * 50)
+					itemdict[self.inventory.value[i].value['item']]['sprite'].rect.y = y + (i // 5 * 50)
+
+					if pick_up_item and itemdict[self.inventory.value[i].value['item']]['sprite'].rect.colliderect(mouse_rect):
+						if moving_item == -1:
+							moving_item = i
+						elif moving_item == i:
+							moving_item = -1
+						else:
+							itemstack = self.inventory.get_item(i)
+							self.inventory.set_item(i, self.inventory.get_item(moving_item))
+							self.inventory.set_item(moving_item, itemstack)
+
+					# dont render extra stuff
+					if moving_item == i:
+						continue
+
 					if self.inventory.value[i].value['item'] != "":
-						screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, (x + (i % 5 * 50), y + (i // 5 * 50)))
+						screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, itemdict[self.inventory.value[i].value['item']]['sprite'].rect)
 
 						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
-						screen.blit(carrots_text, (x + (i % 5 * 50), y + (i // 5 * 50) + 30))
+						screen.blit(carrots_text, (itemdict[self.inventory.value[i].value['item']]['sprite'].rect.x, itemdict[self.inventory.value[i].value['item']]['sprite'].rect.y + 30))
 
-				if moving_item:
-					pointer = carrotitem
+				if moving_item != -1:
+					pointer = itemdict[self.inventory.value[moving_item].value['item']]['sprite']
 					px = pointer.rect.width
 					py = pointer.rect.height
 					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
 
 			else:
-				moving_item = False
+				moving_item = -1
+
+			pick_up_item = False
 				
 
 			
@@ -292,16 +306,16 @@ class Game:
 			#current buy and sell controls
 			if self.game_data['move_ticker'] == 0:
 				if keys[pygame.K_6]:
-					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : self.inventory.get_item('carrot').get_count() * 2}))
-					self.inventory.get_item('carrot').set_count(0)
+					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : self.inventory.get_item_by_name('carrot').get_count() * 2}))
+					self.inventory.get_item_by_name('carrot').set_count(0)
 					self.game_data['move_ticker'] = key_cooldown
 
-				elif keys[pygame.K_7] and self.inventory.get_item('coin').get_count() >= 10:
+				elif keys[pygame.K_7] and self.inventory.get_item_by_name('coin').get_count() >= 10:
 					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -10}))
 					self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : 10}))
 					self.game_data['move_ticker'] = key_cooldown
 
-				elif keys[pygame.K_8] and self.inventory.get_item('coin').get_count() >= 20 and self.inventory.get_item('carrotseed').get_count()*2 + self.inventory.get_item('carrot').get_count()*2 + self.inventory.get_item('coin').get_count() >= 30:
+				elif keys[pygame.K_8] and self.inventory.get_item_by_name('coin').get_count() >= 20 and self.inventory.get_item_by_name('carrotseed').get_count()*2 + self.inventory.get_item_by_name('carrot').get_count()*2 + self.inventory.get_item_by_name('coin').get_count() >= 30:
 					self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : 6}))
 					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -20}))
 					self.game_data['move_ticker'] = key_cooldown

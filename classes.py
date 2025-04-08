@@ -70,7 +70,10 @@ class Inventory:
 	def set_item(self, i, itemstack):
 		self.value[i] = itemstack
 
-	def get_item(self, item):
+	def get_item(self, i):
+		return self.value[i]
+
+	def get_item_by_name(self, item):
 		for i in range(0, 24):
 			if self.value[i].value['item'] == item:
 				return self.value[i]
