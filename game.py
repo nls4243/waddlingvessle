@@ -36,7 +36,8 @@ items = {
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
-		'countable' : 15, 
+		'countable' : 15,
+		'placeable' : carrot_seed_plot
 	},
 	'hoe' : {
 		'sprite' : gardenhoe,
@@ -172,7 +173,7 @@ class Game:
 				continue
 
 			mousex, mousey = pygame.mouse.get_pos()
-			mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
+			mouse_rect = pygame.Rect(mousex+3, mousey+3, 9, 9)
 
 			# per loop vars
 			pick_up_item = False
@@ -224,6 +225,7 @@ class Game:
 					# Check if the seed has been planted and update to fully grown after X seconds
 					if state == 2 and time.time() - planting_time > grow_time:
 						self.game_data['grid_state'][str((row, col))] = (3, planting_time)  # Mark as fully grown
+
 			# event handler
 			for event in events:
 				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
@@ -271,12 +273,13 @@ class Game:
 			for i in range(5):
 				item = self.inventory.value[i]
 				item_def = items[item.value['item']]
+				item_sprite = item_def['sprite']
 
-				item_def['sprite'].rect.x = hotbar_x + (i * 34)
-				item_def['sprite'].rect.y = hotbar_y
-				screen.blit(item_def['sprite'].image, item_def['sprite'].rect)
+				item_sprite.rect.x = hotbar_x + (i * 34)
+				item_sprite.rect.y = hotbar_y
+				screen.blit(item_sprite.image, item_sprite.rect)
 
-				if pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
+				if pick_up_item and item_sprite.rect.colliderect(mouse_rect):
 					self.game_data['dnum'] = i
 
 				if 'countable' in item_def:
@@ -303,12 +306,13 @@ class Game:
 				for i in range(len(self.inventory.value)):
 					itemstack = self.inventory.value[i]
 					item_def = items[itemstack.value['item']]
+					item_sprite = item_def['sprite']
 
-					item_def['sprite'].rect.x = x + (i % 5 * 50)
-					item_def['sprite'].rect.y = y + (i // 5 * 50)
+					item_sprite.rect.x = x + (i % 5 * 50)
+					item_sprite.rect.y = y + (i // 5 * 50)
 
-					if not item_picked_up and pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
-						if moving_item == -1:
+					if not item_picked_up and pick_up_item and item_sprite.rect.colliderect(mouse_rect):
+						if moving_item == -1 and itemstack.get_item() != '':
 							moving_item = i
 						elif moving_item == i:
 							moving_item = -1
@@ -325,11 +329,11 @@ class Game:
 						continue
 
 					if itemstack.value['item'] != "":
-						screen.blit(item_def['sprite'].image, item_def['sprite'].rect)
+						screen.blit(item_sprite.image, item_sprite.rect)
 
 						if 'countable' in item_def:
 							carrots_text = font.render(f"{itemstack.get_count()}", True, BLACK)
-							screen.blit(carrots_text, (item_def['sprite'].rect.x, item_def['sprite'].rect.y + 30))
+							screen.blit(carrots_text, (item_sprite.rect.x, item_sprite.rect.y + 30))
 
 				if moving_item != -1:
 					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
