@@ -299,8 +299,9 @@ class Game:
 					if itemstack.value['item'] != "":
 						screen.blit(item_def['sprite'].image, item_def['sprite'].rect)
 
-						carrots_text = font.render(f"{itemstack.get_count()}", True, BLACK)
-						screen.blit(carrots_text, (item_def['sprite'].rect.x, item_def['sprite'].rect.y + 30))
+						if 'countable' in item_def:
+							carrots_text = font.render(f"{itemstack.get_count()}", True, BLACK)
+							screen.blit(carrots_text, (item_def['sprite'].rect.x, item_def['sprite'].rect.y + 30))
 
 				if moving_item != -1:
 					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
