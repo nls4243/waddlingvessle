@@ -26,13 +26,29 @@ gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
 noitem = simplesprite('blank.png')
 
-itemdict = {
-	'carrotseed' : {'sprite' : carrotseeds},
-	'carrot' : {'sprite' : carrotitem},
-	'hoe' : {'sprite' : gardenhoe},
-	'gardenglove' : {'sprite' : gardenglove},
-	'coin' : {'sprite' : coin},
-	'' : {'sprite' : noitem}
+items = {
+	'' : {
+		'sprite' : noitem
+	},
+	'carrot' : {
+		'sprite' : carrotitem,
+		'countable' : 0,
+	},
+	'carrotseed' : {
+		'sprite' : carrotseeds,	# Must
+		'countable' : 15, 		#  optional, if exists then value is inital number
+	},
+	'hoe' : {
+		'sprite' : gardenhoe,
+		'countable' : 6,
+	},
+	'gardenglove' : {
+		'sprite' : gardenglove
+	},
+	'coin' : {
+		'sprite' : coin,
+		'countable' : 0
+	}
 }
 
 
@@ -66,11 +82,13 @@ class Game:
 		self.game_data['openinv'] = False
 
 		self.inventory = Inventory()
-		self.inventory.set_item(0, Itemstack({'item' : "carrotseed", 'count' : 15}))
-		self.inventory.set_item(1, Itemstack({'item' : "carrot", 'count' : 0}))
-		self.inventory.set_item(2, Itemstack({'item' : "hoe", 'count' : 6}))
-		self.inventory.set_item(3, Itemstack({'item' : "gardenglove", 'count' : 0}))
-		self.inventory.set_item(4, Itemstack({'item' : "coin", 'count' : 0}))
+		for key, definition in items.items():
+			if key == '':	continue
+			c = 0
+			if 'countable' in definition:
+				c = definition['countable']
+			self.inventory.set_item(0, Itemstack({'item' : key, 'count' : c}))
+
 		self.game_data['inventory'] = self.inventory.get_metadata()
 
 
@@ -146,7 +164,7 @@ class Game:
 			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
 			wielded = Empty()
 			wielded.item = self.inventory.value[self.game_data['dnum']]
-			wielded.sprite = itemdict[wielded.item.value['item']]['sprite']
+			wielded.sprite = items[wielded.item.value['item']]['sprite']
 			wielded.sprite.rect.center = (player.rect.x + 10, player.rect.y + 35)
 
 
@@ -232,7 +250,7 @@ class Game:
 			y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(0, 5):
 				if self.inventory.value[i].value['item'] != "":
-					screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, (x + (i * 34), y))
+					screen.blit(items[self.inventory.value[i].value['item']]['sprite'].image, (x + (i * 34), y))
 
 					carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, LBLUE)
 					screen.blit(carrots_text, (x + (i * 34), y + 30))
@@ -253,10 +271,10 @@ class Game:
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
 				for i in range(0, 24):
-					itemdict[self.inventory.value[i].value['item']]['sprite'].rect.x = x + (i % 5 * 50)
-					itemdict[self.inventory.value[i].value['item']]['sprite'].rect.y = y + (i // 5 * 50)
+					items[self.inventory.value[i].value['item']]['sprite'].rect.x = x + (i % 5 * 50)
+					items[self.inventory.value[i].value['item']]['sprite'].rect.y = y + (i // 5 * 50)
 
-					if pick_up_item and itemdict[self.inventory.value[i].value['item']]['sprite'].rect.colliderect(mouse_rect):
+					if pick_up_item and items[self.inventory.value[i].value['item']]['sprite'].rect.colliderect(mouse_rect):
 						if moving_item == -1:
 							moving_item = i
 						elif moving_item == i:
@@ -271,13 +289,13 @@ class Game:
 						continue
 
 					if self.inventory.value[i].value['item'] != "":
-						screen.blit(itemdict[self.inventory.value[i].value['item']]['sprite'].image, itemdict[self.inventory.value[i].value['item']]['sprite'].rect)
+						screen.blit(items[self.inventory.value[i].value['item']]['sprite'].image, items[self.inventory.value[i].value['item']]['sprite'].rect)
 
 						carrots_text = font.render(f"{self.inventory.value[i].value['count']}", True, BLACK)
-						screen.blit(carrots_text, (itemdict[self.inventory.value[i].value['item']]['sprite'].rect.x, itemdict[self.inventory.value[i].value['item']]['sprite'].rect.y + 30))
+						screen.blit(carrots_text, (items[self.inventory.value[i].value['item']]['sprite'].rect.x, items[self.inventory.value[i].value['item']]['sprite'].rect.y + 30))
 
 				if moving_item != -1:
-					pointer = itemdict[self.inventory.value[moving_item].value['item']]['sprite']
+					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
 					px = pointer.rect.width
 					py = pointer.rect.height
 					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
