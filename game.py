@@ -43,12 +43,11 @@ items = {}
 
 items = {
 	'' : {
-		'sprite' : noitem
+		'sprite' : noitem	# Must
 	},
-	
+
 	'radish' : {
-		'sprite' : radish,	# Must
-		'countable' : 0,		# Optional, if exists then value is inital number
+		'sprite' : radish
 	},
 	'radish_seeds' : {
 		'sprite' : radish_seeds,
@@ -65,8 +64,7 @@ items = {
 	},
 
 	'carrot' : {
-		'sprite' : carrotitem,
-		'countable' : 0,
+		'sprite' : carrotitem
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
