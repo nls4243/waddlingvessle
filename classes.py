@@ -37,6 +37,9 @@ class Itemstack:
 	def set_count(self, n):
 		self.value['count'] = n
 
+	def get_item(self):
+		return self.value['item']
+
 	def get_metadata(self):
 		return self.value
 

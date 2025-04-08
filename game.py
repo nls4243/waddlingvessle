@@ -31,12 +31,12 @@ items = {
 		'sprite' : noitem
 	},
 	'carrot' : {
-		'sprite' : carrotitem,
-		'countable' : 0,
+		'sprite' : carrotitem,	# Must
+		'countable' : 0,		# Optional, if exists then value is inital number
 	},
 	'carrotseed' : {
-		'sprite' : carrotseeds,	# Must
-		'countable' : 15, 		#  optional, if exists then value is inital number
+		'sprite' : carrotseeds,
+		'countable' : 15, 
 	},
 	'hoe' : {
 		'sprite' : gardenhoe,
@@ -50,6 +50,15 @@ items = {
 		'countable' : 0
 	}
 }
+
+items_started_with = [
+	'carrot',
+	'carrotseed',
+	'hoe',
+	'gardenglove',
+	'coin'
+]
+
 
 
 class Game:
@@ -83,11 +92,10 @@ class Game:
 
 		self.inventory = Inventory()
 		i = 0
-		for key, definition in items.items():
-			if key == '':	continue
+		for key in items_started_with:
 			c = 0
-			if 'countable' in definition:
-				c = definition['countable']
+			if 'countable' in items[key]:
+				c = items[key]['countable']
 			self.inventory.set_item(i, Itemstack({'item' : key, 'count' : c}))
 			i += 1
 
@@ -98,11 +106,6 @@ class Game:
 		self.grid = [[0] * self.cols for _ in range(self.rows)]
 		# Dictionary to store the state and planting time of each grid square
 		self.game_data['grid_state'] = {str((row, col)): (0, 0) for row in range(self.rows) for col in range(self.cols)}
-
-		self.Blanks = {}
-		for x in range(0, 1):
-			self.Blanks[x] = simplesprite('blank.png')
-			self.Blanks[x].rect.center = ((width / 2)-172 + (68 * x), height - (hotbarUI.rect.height/2))
 
 		# Only used at start/save time data
 		self.game_data['player_pos'] = (width / 2, height / 2)
@@ -124,21 +127,55 @@ class Game:
 		# ambiance
 		mixer.music.set_volume(int(not self.game_data['mute']))
 
+
+		self.clock = pygame.time.Clock()
+
 		# Start
 		self._start()
 
 
+	def _help(self):
+		while True:
+			events = pygame.event.get()
+			keys = pygame.key.get_pressed()
+			for event in events:
+				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+					self._save()
+					return
+
+			if not keys[pygame.K_h]:
+				break
+
+			screen.fill(YELLOW)
+
+			#esc for controls prompt
+			controls_text = font.render("*CAUTION* Game Under Construction *CAUTION* ", True, BLACK)
+			screen.blit(controls_text, (10, 10))
+
+			# Update display
+			pygame.display.flip()
+
+			self.clock.tick(60)
+			
+
 
 	def _start(self):
-		clock = pygame.time.Clock()
-
 		moving_item = -1
-		pick_up_item = False
 		while True:
-			#variables that need to be in the loop
+			#variables that updated every frame
+			events = pygame.event.get()
 			keys = pygame.key.get_pressed()
+
+			# Help HUD
+			if keys[pygame.K_h]:
+				self._help()
+				continue
+
 			mousex, mousey = pygame.mouse.get_pos()
 			mouse_rect = pygame.Rect(mousex, mousey, 1, 1)
+
+			# per loop vars
+			pick_up_item = False
 
 			#prevents multiple key presses from one
 			if self.game_data['move_ticker'] >= 1:
@@ -163,10 +200,9 @@ class Game:
 			elif keys[pygame.K_5]:
 				self.game_data['dnum'] = 4
 
-			highlight.rect.center = (width / 2 - 86 + (34 * self.game_data['dnum']), height - (hotbarUI.rect.height/2))
 			wielded = Empty()
-			wielded.item = self.inventory.value[self.game_data['dnum']]
-			wielded.sprite = items[wielded.item.value['item']]['sprite']
+			wielded.itemstack = self.inventory.value[self.game_data['dnum']]
+			wielded.sprite = items[wielded.itemstack.value['item']]['sprite']
 			wielded.sprite.rect.center = (player.rect.x + 10, player.rect.y + 35)
 
 
@@ -189,7 +225,7 @@ class Game:
 					if state == 2 and time.time() - planting_time > grow_time:
 						self.game_data['grid_state'][str((row, col))] = (3, planting_time)  # Mark as fully grown
 			# event handler
-			for event in pygame.event.get():
+			for event in events:
 				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
 					self._save()
 					return
@@ -197,70 +233,57 @@ class Game:
 				#if event.type == pygame.VIDEORESIZE:
 				#  width, height = event.w, event.h
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					if self.game_data['move_ticker'] == 0:
-						pick_up_item = True
-						self.game_data['move_ticker'] = key_cooldown
-
-					mousex, mousey = pygame.mouse.get_pos()
-					for x in range(len(self.Blanks)):
-						if self.Blanks[x].rect.colliderect(mouse_rect):
-							self.game_data['dnum'] = x
-							break
-
+					pick_up_item = True
 
 				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
 					col, row = player.rect.center
 					col //= self.game_data['grid_size']
 					row //= self.game_data['grid_size']
 
-					if self.game_data['placing_crop']:
-						# Place empty crop plot if the square is empty
-						match self.game_data['grid_state'][str((row, col))][0]:
-							case 0:
-								if  wielded.item.value['item'] == 'hoe' and wielded.item.get_count() > 0:
-									self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
-									self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : -1}))
-							case 1:
-								if wielded.item.value['item'] == 'carrotseed' and wielded.item.get_count() > 0:
-									self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-									self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : -1}))
-							case 3:
-								if wielded.item.value['item'] == 'gardenglove':
-									self.game_data['grid_state'][str((row, col))] = (1, 0)
-									self.inventory.add_item(Itemstack({'item' : 'carrot', 'count' : 1}))
+					# Place empty crop plot if the square is empty
+					match self.game_data['grid_state'][str((row, col))][0]:
+						case 0:
+							if  wielded.itemstack.value['item'] == 'hoe' and wielded.itemstack.get_count() > 0:
+								self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
+								self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : -1}))
+						case 1:
+							if wielded.itemstack.value['item'] == 'carrotseed' and wielded.itemstack.get_count() > 0:
+								self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
+								self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : -1}))
+						case 3:
+							if wielded.itemstack.value['item'] == 'gardenglove':
+								self.game_data['grid_state'][str((row, col))] = (1, 0)
+								self.inventory.add_item(Itemstack({'item' : 'carrot', 'count' : 1}))
 
-					# Plant a new seed if the square has an empty crop plot
-					else:
-						match self.game_data['grid_state'][str((row, col))][0]:
-							case 1:
-								self.game_data['grid_state'][str((row, col))] = (2, (time.time()))  # Marks the plot as planted in and starts the timer to grow carrot
 
 			# displays everything that need to be on top
 			screen.blit(player.image, player.rect)
 			screen.blit(wielded.sprite.image, wielded.sprite.rect)
 
 
-			# displaying everything else
-
-			for x in range(len(self.Blanks)):
-				screen.blit(self.Blanks[x].image, self.Blanks[x].rect)
-
 
 			# HotBar
 
 			screen.blit(hotbarUI.image, hotbarUI.rect)
 
-			x = width / 2 - 102
-			y = height - (hotbarUI.rect.height/2) - 15
+			hotbar_x = width / 2 - 102
+			hotbar_y = height - (hotbarUI.rect.height/2) - 15
 			for i in range(5):
 				item = self.inventory.value[i]
 				item_def = items[item.value['item']]
-				screen.blit(item_def['sprite'].image, (x + (i * 34), y))
+
+				item_def['sprite'].rect.x = hotbar_x + (i * 34)
+				item_def['sprite'].rect.y = hotbar_y
+				screen.blit(item_def['sprite'].image, item_def['sprite'].rect)
+
+				if pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
+					self.game_data['dnum'] = i
 
 				if 'countable' in item_def:
 					carrots_text = font.render(f"{item.get_count()}", True, LBLUE)
-					screen.blit(carrots_text, (x + (i * 34), y + 30))
+					screen.blit(carrots_text, (hotbar_x + (i * 34), hotbar_y + 30))
 
+			highlight.rect.center = (hotbar_x+16 + (34 * self.game_data['dnum']), hotbar_y + 15)
 			screen.blit(highlight.image, highlight.rect)
 
 
@@ -276,6 +299,7 @@ class Game:
 
 				x = inventory.rect.x + 35
 				y = inventory.rect.y + 30
+				item_picked_up = False
 				for i in range(len(self.inventory.value)):
 					itemstack = self.inventory.value[i]
 					item_def = items[itemstack.value['item']]
@@ -283,7 +307,7 @@ class Game:
 					item_def['sprite'].rect.x = x + (i % 5 * 50)
 					item_def['sprite'].rect.y = y + (i // 5 * 50)
 
-					if pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
+					if not item_picked_up and pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
 						if moving_item == -1:
 							moving_item = i
 						elif moving_item == i:
@@ -294,7 +318,7 @@ class Game:
 							self.inventory.set_item(moving_item, itemstack)
 							moving_item = -1
 
-						pick_up_item = False
+						item_picked_up = True
 
 					# dont render extra stuff
 					if moving_item == i:
@@ -319,9 +343,6 @@ class Game:
 
 			
 			
-			#esc for controls prompt
-			controls_text = font.render("*CAUTION* Game Under Construction *CAUTION* ", True, YELLOW)
-			screen.blit(controls_text, (10, 10))
 
 			# Update display
 			pygame.display.flip()
@@ -371,4 +392,4 @@ class Game:
 			# Cap the player's position
 			player.rect.x = max(0, min(player.rect.x, width - player.rect.width))
 
-			clock.tick(60)
+			self.clock.tick(60)
