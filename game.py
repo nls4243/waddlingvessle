@@ -82,12 +82,14 @@ class Game:
 		self.game_data['openinv'] = False
 
 		self.inventory = Inventory()
+		i = 0
 		for key, definition in items.items():
 			if key == '':	continue
 			c = 0
 			if 'countable' in definition:
 				c = definition['countable']
-			self.inventory.set_item(0, Itemstack({'item' : key, 'count' : c}))
+			self.inventory.set_item(i, Itemstack({'item' : key, 'count' : c}))
+			i += 1
 
 		self.game_data['inventory'] = self.inventory.get_metadata()
 
