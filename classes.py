@@ -69,10 +69,10 @@ class Inventory:
 				self.value[i].combine(itemstack)
 				return True
 
-			elif self.value[i].same_as(No_Item):
+			elif self.value[i].same_as(No_Item) and free == -1:
 				free = i
 
-		if free >= 0:
+		if free != -1:
 			self.value[i] = itemstack
 			return True
 
