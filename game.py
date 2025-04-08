@@ -132,7 +132,7 @@ class Game:
 	def _start(self):
 		clock = pygame.time.Clock()
 
-		moving_item = 0
+		moving_item = -1
 		pick_up_item = False
 		while True:
 			#variables that need to be in the loop
@@ -283,10 +283,10 @@ class Game:
 					item_def['sprite'].rect.y = y + (i // 5 * 50)
 
 					if pick_up_item and item_def['sprite'].rect.colliderect(mouse_rect):
-						if moving_item == 0:
+						if moving_item == -1:
 							moving_item = i
 						elif moving_item == i:
-							moving_item = 0
+							moving_item = -1
 						else:
 							itemstack = self.inventory.get_item(i)
 							self.inventory.set_item(i, self.inventory.get_item(moving_item))
@@ -303,14 +303,14 @@ class Game:
 							carrots_text = font.render(f"{itemstack.get_count()}", True, BLACK)
 							screen.blit(carrots_text, (item_def['sprite'].rect.x, item_def['sprite'].rect.y + 30))
 
-				if moving_item != 0:
+				if moving_item != -1:
 					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
 					px = pointer.rect.width
 					py = pointer.rect.height
 					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
 
 			else:
-				moving_item = 0
+				moving_item = -1
 
 			pick_up_item = False
 				
