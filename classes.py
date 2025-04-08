@@ -37,6 +37,9 @@ class Itemstack:
 	def set_count(self, n):
 		self.value['count'] = n
 
+	def add_count(self, n):
+		self.value['count'] += n
+
 	def get_item(self):
 		return self.value['item']
 
@@ -58,6 +61,7 @@ class Inventory:
 				self.value.insert(i, No_Item)
 
 
+	# Broken
 	def add_item(self, itemstack):
 		free = -1
 		for i in range(len(self.value)):
@@ -65,7 +69,7 @@ class Inventory:
 				self.value[i].combine(itemstack)
 				return True
 
-			elif self.value[i].same_as(No_Item) and free -1:
+			elif self.value[i].same_as(No_Item):
 				free = i
 
 		if free >= 0:

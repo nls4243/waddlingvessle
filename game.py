@@ -15,40 +15,88 @@ inventory = simplesprite('carrotinvUI.png', (width / 2, height / 2))
 player = None
 
 empty_crop_plot = pygame.image.load(get_asset_path("emptycropplot.png"))
-carrot_seed_plot = pygame.image.load(get_asset_path("carrotseedplot.png"))
 fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
 
 
-carrotitem = simplesprite('justcarrot.png')
-carrotseeds = simplesprite('carrotseedpack.png')
 gardenhoe = simplesprite('gardenhoe.png')
 gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
 noitem = simplesprite('blank.png')
+soil = simplesprite('emptycropplot.png')
+
+carrot_seed_plot = simplesprite('carrotseedplot.png')
+fully_grown_carrot = simplesprite('fullygrowncarrot.png')
+carrotitem = simplesprite('justcarrot.png')
+carrotseeds = simplesprite('carrotseedpack.png')
+
+radish = simplesprite('radish.png')
+radish_seeds = simplesprite('radish_seeds.png')
+radish_ungrown_plot = simplesprite('radish_ungrown_plot.png')
+radish_grown_plot = simplesprite('radish_grown_plot.png')
+
+
+
+
+items = {}
+
+
 
 items = {
 	'' : {
 		'sprite' : noitem
 	},
-	'carrot' : {
-		'sprite' : carrotitem,	# Must
+	
+	'radish' : {
+		'sprite' : radish,	# Must
 		'countable' : 0,		# Optional, if exists then value is inital number
+	},
+	'radish_seeds' : {
+		'sprite' : radish_seeds,
+		'countable' : 15,
+		'use_on_soil' : ('radish_ungrown_plot', 3)
+	},
+	'radish_ungrown_plot' : {
+		'sprite' : radish_ungrown_plot,
+		'grows' : ('radish_grown_plot', 0)
+	},
+	'radish_grown_plot' : {
+		'sprite' : radish_grown_plot,
+		'fruit' : ('radish', ("soil", 0))
+	},
+
+	'carrot' : {
+		'sprite' : carrotitem,
+		'countable' : 0,
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
 		'countable' : 15,
-		'placeable' : carrot_seed_plot
+		'use_on_soil' : ('carrot_seed_plot', 3)
 	},
+	'carrot_seed_plot' : {
+		'sprite' : carrot_seed_plot,
+		'grows' : ('fully_grown_carrot', 0)
+	},
+	'fully_grown_carrot' : {
+		'sprite' : fully_grown_carrot,
+		'fruit' : ('carrot', ("soil", 0))
+	},
+
 	'hoe' : {
 		'sprite' : gardenhoe,
 		'countable' : 6,
+		'use_on_' : ('soil', 0),
 	},
 	'gardenglove' : {
-		'sprite' : gardenglove
+		'sprite' : gardenglove,
+		'pulls_fruit' : True
 	},
 	'coin' : {
 		'sprite' : coin,
 		'countable' : 0
+	},
+	'soil' : {
+		'sprite' : soil,
 	}
 }
 
@@ -57,6 +105,7 @@ items_started_with = [
 	'carrotseed',
 	'hoe',
 	'gardenglove',
+	'radish_seeds',
 	'coin'
 ]
 
@@ -106,7 +155,7 @@ class Game:
 		self.rows, self.cols = width // self.game_data['grid_size'], width // self.game_data['grid_size']
 		self.grid = [[0] * self.cols for _ in range(self.rows)]
 		# Dictionary to store the state and planting time of each grid square
-		self.game_data['grid_state'] = {str((row, col)): (0, 0) for row in range(self.rows) for col in range(self.cols)}
+		self.game_data['grid_plots'] = {str((row, col)): ("", 0) for row in range(self.rows) for col in range(self.cols)}
 
 		# Only used at start/save time data
 		self.game_data['player_pos'] = (width / 2, height / 2)
@@ -216,17 +265,13 @@ class Game:
 					rect = pygame.Rect(col * self.game_data['grid_size'], row * self.game_data['grid_size'], self.game_data['grid_size'], self.game_data['grid_size'])
 
 					# Display the appropriate crop grow stage based on the grid state
-					state, planting_time = self.game_data['grid_state'][str((row, col))]
-					if state == 1:
-						screen.blit(empty_crop_plot, rect.topleft)
-					elif state == 2:
-						screen.blit(carrot_seed_plot, rect.topleft)
-					elif state == 3:
-						screen.blit(fully_grown_carrot, rect.topleft)
+					state, planting_time = self.game_data['grid_plots'][str((row, col))]
+					if state != "":
+						if 'grows' in items[state] and planting_time > 0 and time.time() >= planting_time:
+							self.game_data['grid_plots'][str((row, col))] = items[state]['grows']
 
-					# Check if the seed has been planted and update to fully grown after X seconds
-					if state == 2 and time.time() - planting_time > grow_time:
-						self.game_data['grid_state'][str((row, col))] = (3, planting_time)  # Mark as fully grown
+						screen.blit(items[state]['sprite'].image, rect.topleft)
+
 
 			# event handler
 			for event in events:
@@ -240,24 +285,24 @@ class Game:
 					pick_up_item = True
 
 				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
-					col, row = player.rect.center
-					col //= self.game_data['grid_size']
-					row //= self.game_data['grid_size']
+					col = player.rect.center[0] // self.game_data['grid_size']
+					row = player.rect.center[1] // self.game_data['grid_size']
 
 					# Place empty crop plot if the square is empty
-					match self.game_data['grid_state'][str((row, col))][0]:
-						case 0:
-							if  wielded.itemstack.value['item'] == 'hoe' and wielded.itemstack.get_count() > 0:
-								self.game_data['grid_state'][str((row, col))] = (1, 0)  # Mark as empty crop plot
-								self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : -1}))
-						case 1:
-							if wielded.itemstack.value['item'] == 'carrotseed' and wielded.itemstack.get_count() > 0:
-								self.game_data['grid_state'][str((row, col))] = (2, time.time())  # Change to seeded crop plot and start timer to grow carrot
-								self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : -1}))
-						case 3:
-							if wielded.itemstack.value['item'] == 'gardenglove':
-								self.game_data['grid_state'][str((row, col))] = (1, 0)
-								self.inventory.add_item(Itemstack({'item' : 'carrot', 'count' : 1}))
+					itemstack = wielded.itemstack
+					itemdef = items[itemstack.get_item()]
+					plot, _ = self.game_data['grid_plots'][str((row, col))]
+
+					if 'use_on_' + plot in itemdef and itemstack.get_count() > 0:
+						itemstack.add_count(-1)
+						self.game_data['grid_plots'][str((row, col))] = (itemdef['use_on_' + plot][0], itemdef['use_on_' + plot][1] + time.time())
+						continue
+
+					elif plot != "":
+						if 'pulls_fruit' in itemdef and 'fruit' in items[plot]:
+							self.inventory.add_item(Itemstack(itemstack = {'item' : items[plot]['fruit'][0], 'count' : 1}))
+							self.game_data['grid_plots'][str((row, col))] = items[plot]['fruit'][1]
+							continue
 
 
 			# displays everything that need to be on top
