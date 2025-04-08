@@ -132,7 +132,9 @@ class Game:
 		self.clock = pygame.time.Clock()
 
 		# Start
+		pygame.mouse.set_visible(False)
 		self._start()
+		pygame.mouse.set_visible(True)
 
 
 	def _help(self):
@@ -347,6 +349,7 @@ class Game:
 
 			
 			
+			pygame.draw.rect(screen, BROWN, mouse_rect)
 
 			# Update display
 			pygame.display.flip()
