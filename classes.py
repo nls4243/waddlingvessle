@@ -93,6 +93,8 @@ class Inventory:
 			if self.value[i].value['item'] == item:
 				return self.value[i]
 
+		return No_Item
+
 	def get_metadata(self):
 		meta = []
 		for i in range(len(self.value)):
