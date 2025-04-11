@@ -48,7 +48,7 @@ items = {
 	'radish' : {
 		'sprite' : radish,
 		'countable' : 0,
-		'value' = 3
+		'value' : 3
 	},
 	'radish_seeds' : {
 		'sprite' : radish_seeds,
@@ -69,7 +69,7 @@ items = {
 	'carrot' : {
 		'sprite' : carrot,
 		'countable' : 0,
-		'value' = 2
+		'value' : 2
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
@@ -325,6 +325,10 @@ class Game:
 				if keys[pygame.K_ESCAPE]:
 					return
 
+				elif keys[pygame.K_e]:
+					game_data['openinv'] = not game_data['openinv']
+					game_data['move_ticker'] = key_cooldown
+
 				elif keys[pygame.K_6]:
 					if game_data['openmarket']:
 						game_data['openmarket'] = False
@@ -374,10 +378,6 @@ class Game:
 
 
 			# Inv
-
-			if keys[pygame.K_e] and game_data['move_ticker'] == 0:
-				game_data['openinv'] = not game_data['openinv']
-				game_data['move_ticker'] = key_cooldown
 
 			if game_data['openinv']:
 				screen.blit(inventory.image, inventory.rect)
@@ -462,7 +462,7 @@ class Game:
 					item_sprite.rect.y = y + (i // 5 * 50)
 					screen.blit(item_sprite.image, item_sprite.rect)
 
-					if pick_up_item and game_data['move_ticker'] == 0 and item_sprite.rect.colliderect(mouse_rect) and self.inventory.get_item_by_name('coin').get_count() >= cost:
+					if pick_up_item and game_data['move_ticker'] == 0 and item_sprite.rect.colliderect(mouse_rect) and self.inventory.get_item_by_name(item).get_count() >= 1:
 						self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : value}))
 						self.inventory.add_item(Itemstack({'item' : item, 'count' : -1}))
 
