@@ -306,7 +306,7 @@ class Game:
 						game_data['grid_plots'][str((row, col))] = (itemdef['use_on_' + plot][0], itemdef['use_on_' + plot][1] + time.time())
 						continue
 
-					elif plot == "" and 'fruit' in items[plot]:
+					elif plot != "" and 'fruit' in items[plot]:
 						self.inventory.add_item(Itemstack(itemstack = {'item' : items[plot]['fruit'][0], 'count' : 1}))
 						game_data['grid_plots'][str((row, col))] = items[plot]['fruit'][1]
 						continue
