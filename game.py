@@ -143,9 +143,7 @@ class Game:
 		self.game_data['move_ticker'] = 0
 		self.game_data['dnum'] = 0
 		self.game_data['grid_size'] = 50
-		self.game_data['openinv'] = False
-		self.game_data['openshop'] = False
-		self.game_data['openmarket'] = False
+		self.game_data['open_menu'] = None
 
 		self.inventory = Inventory()
 		for key, idef in items.items():
@@ -326,21 +324,24 @@ class Game:
 					return
 
 				elif keys[pygame.K_e]:
-					game_data['openinv'] = not game_data['openinv']
+					if game_data['open_menu'] == 'inv':
+						game_data['open_menu'] = None
+					else:
+						game_data['open_menu'] = 'inv'
 					game_data['move_ticker'] = key_cooldown
 
 				elif keys[pygame.K_6]:
-					if game_data['openmarket']:
-						game_data['openmarket'] = False
-
-					game_data['openshop'] = not game_data['openshop']
+					if game_data['open_menu'] == 'shop':
+						game_data['open_menu'] = None
+					else:
+						game_data['open_menu'] = 'shop'
 					game_data['move_ticker'] = key_cooldown
 
 				elif keys[pygame.K_7]:
-					if game_data['openshop']:
-						game_data['openshop'] = False
-
-					game_data['openmarket'] = not game_data['openmarket']
+					if game_data['open_menu'] == 'market':
+						game_data['open_menu'] = None
+					else:
+						game_data['open_menu'] = 'market'
 					game_data['move_ticker'] = key_cooldown
 
 				elif keys[pygame.K_m]:
@@ -379,7 +380,7 @@ class Game:
 
 			# Inv
 
-			if game_data['openinv']:
+			if game_data['open_menu'] == 'inv':
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
@@ -423,7 +424,7 @@ class Game:
 					py = pointer.rect.height
 					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
 
-			elif game_data['openshop']:
+			elif game_data['open_menu'] == 'shop':
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
@@ -448,7 +449,7 @@ class Game:
 
 					i += 1
 
-			elif game_data['openmarket']:
+			elif game_data['open_menu'] == 'market':
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
@@ -472,7 +473,7 @@ class Game:
 					i += 1
 
 
-			if not game_data['openinv']:
+			if not game_data['open_menu'] == "inv":
 				moving_item = -1
 				
 
