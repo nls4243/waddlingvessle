@@ -47,7 +47,8 @@ items = {
 
 	'radish' : {
 		'sprite' : radish,
-		'countable' : 0
+		'countable' : 0,
+		'value' = 3
 	},
 	'radish_seeds' : {
 		'sprite' : radish_seeds,
@@ -67,7 +68,8 @@ items = {
 
 	'carrot' : {
 		'sprite' : carrot,
-		'countable' : 0
+		'countable' : 0,
+		'value' = 2
 	},
 	'carrotseed' : {
 		'sprite' : carrotseeds,
@@ -101,6 +103,11 @@ items = {
 	}
 }
 
+
+market_items = {}
+for item, idef in items.items():
+	if 'value' in idef:
+		market_items[item] = idef['value']
 
 shop_items = {}
 for item, idef in items.items():
@@ -138,6 +145,7 @@ class Game:
 		self.game_data['grid_size'] = 50
 		self.game_data['openinv'] = False
 		self.game_data['openshop'] = False
+		self.game_data['openmarket'] = False
 
 		self.inventory = Inventory()
 		for key, idef in items.items():
@@ -318,7 +326,17 @@ class Game:
 					return
 
 				elif keys[pygame.K_6]:
+					if game_data['openmarket']:
+						game_data['openmarket'] = False
+
 					game_data['openshop'] = not game_data['openshop']
+					game_data['move_ticker'] = key_cooldown
+
+				elif keys[pygame.K_7]:
+					if game_data['openshop']:
+						game_data['openshop'] = False
+
+					game_data['openmarket'] = not game_data['openmarket']
 					game_data['move_ticker'] = key_cooldown
 
 				elif keys[pygame.K_m]:
@@ -423,14 +441,35 @@ class Game:
 					if pick_up_item and game_data['move_ticker'] == 0 and item_sprite.rect.colliderect(mouse_rect) and self.inventory.get_item_by_name('coin').get_count() >= cost:
 						self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -cost}))
 						self.inventory.add_item(Itemstack({'item' : item, 'count' : value}))
-						
-	
+
 
 					screen.blit(font.render(f"{cost}", True, YELLOW), (item_sprite.rect.x - 5, item_sprite.rect.y - 5))
 					screen.blit(font.render(f"{value}", True, BLACK), (item_sprite.rect.x - 5, item_sprite.rect.y + 30))
 
 					i += 1
 
+			elif game_data['openmarket']:
+				screen.blit(inventory.image, inventory.rect)
+
+				x = inventory.rect.x + 35
+				y = inventory.rect.y + 30
+				i = 0
+				for item, value in market_items.items():
+
+					item_sprite = items[item]['sprite']
+
+					item_sprite.rect.x = x + (i % 5 * 50)
+					item_sprite.rect.y = y + (i // 5 * 50)
+					screen.blit(item_sprite.image, item_sprite.rect)
+
+					if pick_up_item and game_data['move_ticker'] == 0 and item_sprite.rect.colliderect(mouse_rect) and self.inventory.get_item_by_name('coin').get_count() >= cost:
+						self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : value}))
+						self.inventory.add_item(Itemstack({'item' : item, 'count' : -1}))
+
+
+					screen.blit(font.render(f"{value}", True, BLACK), (item_sprite.rect.x - 5, item_sprite.rect.y + 30))
+
+					i += 1
 
 
 			if not game_data['openinv']:
