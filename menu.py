@@ -41,5 +41,5 @@ while menu_loop:
 			elif exit_button.rect.colliderect(mouse_rect):
 				end()
 
-		elif event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+		elif event.type == pygame.QUIT or keys[pygame.K_q]:
 			end()

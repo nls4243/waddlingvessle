@@ -19,7 +19,6 @@ fully_grown_carrot = pygame.image.load(get_asset_path("fullygrowncarrot.png"))
 
 
 gardenhoe = simplesprite('gardenhoe.png')
-gardenglove = simplesprite('gardenglove.png')
 coin = simplesprite('coin.png')
 noitem = simplesprite('blank.png')
 soil = simplesprite('emptycropplot.png')
@@ -54,7 +53,8 @@ items = {
 		'sprite' : radish_seeds,
 		'countable' : 15,
 		'use_on_soil' : ('radish_ungrown_plot', 3),
-		'give_player' : True
+		'give_player' : True,
+		'price' : (1, 2)
 	},
 	'radish_ungrown_plot' : {
 		'sprite' : radish_ungrown_plot,
@@ -73,7 +73,8 @@ items = {
 		'sprite' : carrotseeds,
 		'countable' : 15,
 		'use_on_soil' : ('carrot_seed_plot', 5),
-		'give_player' : True
+		'give_player' : True,
+		'price' : (1, 1)
 	},
 	'carrot_seed_plot' : {
 		'sprite' : carrot_seed_plot,
@@ -88,12 +89,8 @@ items = {
 		'sprite' : gardenhoe,
 		'countable' : 6,
 		'use_on_' : ('soil', 0),
-		'give_player' : True
-	},
-	'gardenglove' : {
-		'sprite' : gardenglove,
-		'pulls_fruit' : True,
-		'give_player' : True
+		'give_player' : True,
+		'price' : (2, 1)
 	},
 	'coin' : {
 		'sprite' : coin,
@@ -103,6 +100,12 @@ items = {
 		'sprite' : soil,
 	}
 }
+
+
+shop_items = {}
+for item, idef in items.items():
+	if 'price' in idef:
+		shop_items[item] = idef['price']
 
 
 
@@ -134,6 +137,7 @@ class Game:
 		self.game_data['dnum'] = 0
 		self.game_data['grid_size'] = 50
 		self.game_data['openinv'] = False
+		self.game_data['openshop'] = False
 
 		self.inventory = Inventory()
 		for key, idef in items.items():
@@ -166,7 +170,7 @@ class Game:
 
 
 		global player
-		player = simplesprite('bunny1.png', self.game_data['player_pos'])
+		player = simplesprite('player.png', self.game_data['player_pos'])
 
 
 
@@ -179,6 +183,9 @@ class Game:
 		# Start
 		pygame.mouse.set_visible(False)
 		self._start()
+
+		# Save
+		self._save()
 		pygame.mouse.set_visible(True)
 
 
@@ -209,6 +216,7 @@ class Game:
 
 	def _start(self):
 		moving_item = -1
+		game_data = self.game_data
 		while True:
 			#variables that updated every frame
 			events = pygame.event.get()
@@ -226,10 +234,10 @@ class Game:
 			pick_up_item = False
 
 			#prevents multiple key presses from one
-			if self.game_data['move_ticker'] >= 1:
-				self.game_data['move_ticker'] -= 1
-			elif self.game_data['move_ticker'] != 0:
-				self.game_data['move_ticker'] = 0
+			if game_data['move_ticker'] >= 1:
+				game_data['move_ticker'] -= 1
+			elif game_data['move_ticker'] != 0:
+				game_data['move_ticker'] = 0
 
 
 			#display background
@@ -238,18 +246,18 @@ class Game:
 
 			#hotbar and wieled
 			if keys[pygame.K_1]:
-				self.game_data['dnum'] = 0
+				game_data['dnum'] = 0
 			elif keys[pygame.K_2]:
-				self.game_data['dnum'] = 1
+				game_data['dnum'] = 1
 			elif keys[pygame.K_3]:
-				self.game_data['dnum'] = 2
+				game_data['dnum'] = 2
 			elif keys[pygame.K_4]:
-				self.game_data['dnum'] = 3
+				game_data['dnum'] = 3
 			elif keys[pygame.K_5]:
-				self.game_data['dnum'] = 4
+				game_data['dnum'] = 4
 
 			wielded = Empty()
-			wielded.itemstack = self.inventory.value[self.game_data['dnum']]
+			wielded.itemstack = self.inventory.value[game_data['dnum']]
 			wielded.sprite = items[wielded.itemstack.value['item']]['sprite']
 			wielded.sprite.rect.center = (player.rect.x + 10, player.rect.y + 35)
 
@@ -258,21 +266,25 @@ class Game:
 			# creates the grid
 			for row in range(self.rows):
 				for col in range(self.cols):
-					rect = pygame.Rect(col * self.game_data['grid_size'], row * self.game_data['grid_size'], self.game_data['grid_size'], self.game_data['grid_size'])
+					rect = pygame.Rect(col * game_data['grid_size'], row * game_data['grid_size'], game_data['grid_size'], game_data['grid_size'])
 
 					# Display the appropriate crop grow stage based on the grid state
-					state, planting_time = self.game_data['grid_plots'][str((row, col))]
+					state, planting_time = game_data['grid_plots'][str((row, col))]
 					if state != "":
 						if 'grows' in items[state] and planting_time > 0 and time.time() >= planting_time:
-							self.game_data['grid_plots'][str((row, col))] = items[state]['grows']
+							game_data['grid_plots'][str((row, col))] = items[state]['grows']
 
 						screen.blit(items[state]['sprite'].image, rect.topleft)
 
 
+			# displays everything that need to be on top
+			screen.blit(player.image, player.rect)
+			screen.blit(wielded.sprite.image, wielded.sprite.rect)
+
 			# event handler
+			SPACE_pressed = keys[K_SPACE] # Optimization
 			for event in events:
-				if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
-					self._save()
+				if event.type == pygame.QUIT:
 					return
 
 				#if event.type == pygame.VIDEORESIZE:
@@ -280,30 +292,39 @@ class Game:
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					pick_up_item = True
 
-				if player.rect.colliderect(mouse_rect) and event.type == pygame.MOUSEBUTTONDOWN or keys[K_SPACE]:
-					col = player.rect.center[0] // self.game_data['grid_size']
-					row = player.rect.center[1] // self.game_data['grid_size']
+				if (event.type == pygame.MOUSEBUTTONDOWN and player.rect.colliderect(mouse_rect)) or SPACE_pressed:
+					col = player.rect.center[0] // game_data['grid_size']
+					row = player.rect.center[1] // game_data['grid_size']
 
 					# Place empty crop plot if the square is empty
 					itemstack = wielded.itemstack
 					itemdef = items[itemstack.get_item()]
-					plot, _ = self.game_data['grid_plots'][str((row, col))]
+					plot, _ = game_data['grid_plots'][str((row, col))]
 
 					if 'use_on_' + plot in itemdef and itemstack.get_count() > 0:
 						itemstack.add_count(-1)
-						self.game_data['grid_plots'][str((row, col))] = (itemdef['use_on_' + plot][0], itemdef['use_on_' + plot][1] + time.time())
+						game_data['grid_plots'][str((row, col))] = (itemdef['use_on_' + plot][0], itemdef['use_on_' + plot][1] + time.time())
 						continue
 
-					elif plot != "":
-						if 'pulls_fruit' in itemdef and 'fruit' in items[plot]:
-							self.inventory.add_item(Itemstack(itemstack = {'item' : items[plot]['fruit'][0], 'count' : 1}))
-							self.game_data['grid_plots'][str((row, col))] = items[plot]['fruit'][1]
-							continue
+					elif plot == "" and 'fruit' in items[plot]:
+						self.inventory.add_item(Itemstack(itemstack = {'item' : items[plot]['fruit'][0], 'count' : 1}))
+						game_data['grid_plots'][str((row, col))] = items[plot]['fruit'][1]
+						continue
 
 
-			# displays everything that need to be on top
-			screen.blit(player.image, player.rect)
-			screen.blit(wielded.sprite.image, wielded.sprite.rect)
+			# Controls
+			if game_data['move_ticker'] == 0:
+				if keys[pygame.K_ESCAPE]:
+					return
+
+				elif keys[pygame.K_6]:
+					game_data['openshop'] = not game_data['openshop']
+					game_data['move_ticker'] = key_cooldown
+
+				elif keys[pygame.K_m]:
+					mixer.music.set_volume(int(game_data['mute']))
+					game_data['mute'] = not game_data['mute']
+					game_data['move_ticker'] = key_cooldown
 
 
 
@@ -323,24 +344,24 @@ class Game:
 				screen.blit(item_sprite.image, item_sprite.rect)
 
 				if pick_up_item and item_sprite.rect.colliderect(mouse_rect):
-					self.game_data['dnum'] = i
+					game_data['dnum'] = i
 
 				if 'countable' in item_def:
 					carrots_text = font.render(f"{item.get_count()}", True, LBLUE)
 					screen.blit(carrots_text, (hotbar_x + (i * 34), hotbar_y + 30))
 
-			highlight.rect.center = (hotbar_x+16 + (34 * self.game_data['dnum']), hotbar_y + 15)
+			highlight.rect.center = (hotbar_x+16 + (34 * game_data['dnum']), hotbar_y + 15)
 			screen.blit(highlight.image, highlight.rect)
 
 
 
 			# Inv
 
-			if keys[pygame.K_e] and self.game_data['move_ticker'] == 0:
-				self.game_data['openinv'] = not self.game_data['openinv']
-				self.game_data['move_ticker'] = key_cooldown
+			if keys[pygame.K_e] and game_data['move_ticker'] == 0:
+				game_data['openinv'] = not game_data['openinv']
+				game_data['move_ticker'] = key_cooldown
 
-			if self.game_data['openinv']:
+			if game_data['openinv']:
 				screen.blit(inventory.image, inventory.rect)
 
 				x = inventory.rect.x + 35
@@ -354,6 +375,7 @@ class Game:
 					item_sprite.rect.x = x + (i % 5 * 50)
 					item_sprite.rect.y = y + (i // 5 * 50)
 
+					# should be out of loop, this is inefficient
 					if not item_picked_up and pick_up_item and item_sprite.rect.colliderect(mouse_rect):
 						if moving_item == -1 and itemstack.get_item() != '':
 							moving_item = i
@@ -375,8 +397,7 @@ class Game:
 						screen.blit(item_sprite.image, item_sprite.rect)
 
 						if 'countable' in item_def:
-							carrots_text = font.render(f"{itemstack.get_count()}", True, BLACK)
-							screen.blit(carrots_text, (item_sprite.rect.x, item_sprite.rect.y + 30))
+							screen.blit(font.render(f"{itemstack.get_count()}", True, BLACK), (item_sprite.rect.x, item_sprite.rect.y + 30))
 
 				if moving_item != -1:
 					pointer = items[self.inventory.value[moving_item].value['item']]['sprite']
@@ -384,7 +405,35 @@ class Game:
 					py = pointer.rect.height
 					screen.blit(pointer.image,  (min(inventory.rect.x + inventory.rect.width - px, max(mousex, inventory.rect.x + px)) - px // 2, min(inventory.rect.y + inventory.rect.height - py, max(mousey, inventory.rect.y + py)) - py // 2))
 
-			else:
+			elif game_data['openshop']:
+				screen.blit(inventory.image, inventory.rect)
+
+				x = inventory.rect.x + 35
+				y = inventory.rect.y + 30
+				i = 0
+				for item, price in shop_items.items():
+					cost, value = price
+
+					item_sprite = items[item]['sprite']
+
+					item_sprite.rect.x = x + (i % 5 * 50)
+					item_sprite.rect.y = y + (i // 5 * 50)
+					screen.blit(item_sprite.image, item_sprite.rect)
+
+					if pick_up_item and game_data['move_ticker'] == 0 and item_sprite.rect.colliderect(mouse_rect) and self.inventory.get_item_by_name('coin').get_count() >= cost:
+						self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -cost}))
+						self.inventory.add_item(Itemstack({'item' : item, 'count' : value}))
+						
+	
+
+					screen.blit(font.render(f"{cost}", True, YELLOW), (item_sprite.rect.x - 5, item_sprite.rect.y - 5))
+					screen.blit(font.render(f"{value}", True, BLACK), (item_sprite.rect.x - 5, item_sprite.rect.y + 30))
+
+					i += 1
+
+
+
+			if not game_data['openinv']:
 				moving_item = -1
 				
 
@@ -396,36 +445,7 @@ class Game:
 			pygame.display.flip()
 
 
-
-
-
-			# Post display operations
-
-			#current buy and sell controls
-			if self.game_data['move_ticker'] == 0:
-				if keys[pygame.K_6]:
-					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : self.inventory.get_item_by_name('carrot').get_count() * 2}))
-					self.inventory.get_item_by_name('carrot').set_count(0)
-					self.game_data['move_ticker'] = key_cooldown
-
-				elif keys[pygame.K_7] and self.inventory.get_item_by_name('coin').get_count() >= 10:
-					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -10}))
-					self.inventory.add_item(Itemstack({'item' : 'carrotseed', 'count' : 10}))
-					self.game_data['move_ticker'] = key_cooldown
-
-				elif keys[pygame.K_8] and self.inventory.get_item_by_name('coin').get_count() >= 20 and self.inventory.get_item_by_name('carrotseed').get_count()*2 + self.inventory.get_item_by_name('carrot').get_count()*2 + self.inventory.get_item_by_name('coin').get_count() >= 30:
-					self.inventory.add_item(Itemstack({'item' : 'hoe', 'count' : 6}))
-					self.inventory.add_item(Itemstack({'item' : 'coin', 'count' : -20}))
-					self.game_data['move_ticker'] = key_cooldown
-
-				elif keys[pygame.K_m]:
-					mixer.music.set_volume(int(self.game_data['mute']))
-					self.game_data['mute'] = not self.game_data['mute']
-					self.game_data['move_ticker'] = key_cooldown
-
-
-			# Move the player
-
+			# movement
 			if keys[pygame.K_w]:
 				player.rect.y -= playerspeed
 			elif keys[pygame.K_s]:
@@ -439,6 +459,8 @@ class Game:
 				player.rect.x += playerspeed
 			# Cap the player's position
 			player.rect.x = max(0, min(player.rect.x, width - player.rect.width))
+
+
 
 			self.clock.tick(60)
 
