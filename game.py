@@ -468,7 +468,7 @@ class Game:
 						self.inventory.add_item(Itemstack({'item' : item, 'count' : -1}))
 
 
-					screen.blit(font.render(f"{value}", True, BLACK), (item_sprite.rect.x - 5, item_sprite.rect.y + 30))
+					screen.blit(font.render(f"{value}", True, BLUE), (item_sprite.rect.x - 5, item_sprite.rect.y + 30))
 
 					i += 1
 
